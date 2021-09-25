@@ -17,14 +17,14 @@ import os
 TEST_DB_FILENAME = "test_database.sqlite"
 @pytest.fixture
 def testDB():
-        os.system(f"python inCollegeDatabase.py {TEST_DB_FILENAME}")
+        os.system(f"python3 inCollegeDatabase.py {TEST_DB_FILENAME}")
         source = sql.connect(TEST_DB_FILENAME)
         cursor = source.cursor()
         return cursor,source
 
 @pytest.fixture
 def destroyTestDB():
-    return lambda : os.system(f"rm {TEST_DB_FILENAME}")
+    return lambda : os.remove(TEST_DB_FILENAME)
 
 #Asserting that login fails when username does not exist
 def test_FailedLogIn(monkeypatch,capsys,testDB,destroyTestDB):
