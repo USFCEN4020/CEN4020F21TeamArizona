@@ -20,18 +20,14 @@ def testDB():
         os.system(f"python3 inCollegeDatabase.py {TEST_DB_FILENAME}")
         source = sql.connect(TEST_DB_FILENAME)
         cursor = source.cursor()
-        return cursor,source
-
-@pytest.fixture
-def destroyTestDB():
-    return lambda : os.remove(TEST_DB_FILENAME)
+        return cursor,source, lambda : os.remove(TEST_DB_FILENAME)
 
 #Asserting that login fails when username does not exist
-def test_FailedLogIn(monkeypatch,capsys,testDB,destroyTestDB):
+def test_FailedLogIn(monkeypatch,capsys,testDB):
     inputs = iter(['bart','simpson'])
     desiredOutput = 'user does not exist with this username and password combination\n'
     monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
-    cursor, _ = testDB
+    cursor, _, destroyTestDB = testDB
     try:
         inCollege.logIn(cursor)
     except(StopIteration):
@@ -40,11 +36,11 @@ def test_FailedLogIn(monkeypatch,capsys,testDB,destroyTestDB):
     destroyTestDB()
         
 #Asserting that sign ups with weak passwords won't be allowed
-def test_WeakPasswords(monkeypatch,capsys,testDB,destroyTestDB):
+def test_WeakPasswords(monkeypatch,capsys,testDB):
     tests = [iter(['bart', 'simpson']),iter(['bart','Simpson']),iter(['bart','Simpson1']),
             iter(['bart','Simpson@']),iter(['bart','simpson12@'])]
     desiredOutput = "Invalid option. Password must between 8 and 12 characters, have a digit, capital letter, and a special character\n"
-    cursor, source = testDB
+    cursor, source, destroyTestDB = testDB
     for inputs in tests:
         monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
         try:
@@ -55,11 +51,11 @@ def test_WeakPasswords(monkeypatch,capsys,testDB,destroyTestDB):
     destroyTestDB()
 
 #Asserting successful sign up when the password is strong enough
-def test_ValidSignUp(monkeypatch,capsys,testDB,destroyTestDB):
+def test_ValidSignUp(monkeypatch,capsys,testDB):
     inputs = iter(['bart','Simpson12@','Bart','Simpson'])
     desiredOutput = 'Logged in!\n'
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
-    cursor, source = testDB
+    cursor, source, destroyTestDB = testDB
     try:
         inCollege.signUp(cursor,source)
     except(StopIteration):
@@ -68,11 +64,11 @@ def test_ValidSignUp(monkeypatch,capsys,testDB,destroyTestDB):
     destroyTestDB()
 
 #Asserting that sign ups where the username already exists will fail
-def test_UsernameExistsInSignUp(monkeypatch,capsys,testDB,destroyTestDB):
+def test_UsernameExistsInSignUp(monkeypatch,capsys,testDB):
     inputs = iter(['bart'])
     desiredOutput = 'Username already exists\n'
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
-    cursor, source = testDB
+    cursor, source, destroyTestDB = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
     ('bart','Simpson@12', 'bart', 'simpson'))
     try:
@@ -83,11 +79,11 @@ def test_UsernameExistsInSignUp(monkeypatch,capsys,testDB,destroyTestDB):
     destroyTestDB()
 
 #Asserting successful login when account is in database
-def test_SuccessfullLogin(monkeypatch,capsys,testDB,destroyTestDB):
+def test_SuccessfullLogin(monkeypatch,capsys,testDB):
     inputs = iter(['bart','Simpson12@'])
     desiredOutput = 'Logged in!\n'
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
-    cursor, _ = testDB
+    cursor, _, destroyTestDB = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
     ('bart','Simpson12@', 'bart', 'simpson'))
     try:
@@ -97,12 +93,12 @@ def test_SuccessfullLogin(monkeypatch,capsys,testDB,destroyTestDB):
         assert output == desiredOutput
     destroyTestDB()
 
-def test_MaxAccounts(monkeypatch,capsys,testDB,destroyTestDB):
+def test_MaxAccounts(monkeypatch,capsys,testDB):
     tests = [iter(['bart','Simpson12@','Bart','Simpson']),iter(['marge', 'Simpson12@','Marge','Simpson']),
         iter(['homer','Simpson12@','Homer','Simpson']),iter(['maggie','Simpson12@','Maggie','Simpson']),
         iter(['lisa','Simpson12@','Lisa','Simpson']),iter(['mrburns','Simpson12@','Mr.','Burns'])]
     desiredOutput = "Unable to sign up. There is already the maximum number of users.\n"
-    cursor, source = testDB
+    cursor, source, destroyTestDB = testDB
     for inputs in tests:
         monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
         try:
@@ -124,11 +120,11 @@ def test_SkillsAreDisplaying(monkeypatch,capsys):
         assert output == desiredOutput
 
 #Assert that if a existing user is found when searched
-def test_SearchExistingUserWhileSignedIn(monkeypatch,capsys,testDB,destroyTestDB):
+def test_SearchExistingUserWhileSignedIn(monkeypatch,capsys,testDB):
     inputs = iter(["homer","simpson"])
     desiredOutput = "They are a part of the InCollege system\nSearch again: 0\n"
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
-    cursor, _= testDB
+    cursor, _, destroyTestDB= testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
     ('homer','Simpson12@', 'homer', 'simpson'))
     try:
@@ -139,10 +135,10 @@ def test_SearchExistingUserWhileSignedIn(monkeypatch,capsys,testDB,destroyTestDB
     destroyTestDB()
 
 #Assert that if a non existing user is not found when searched
-def test_SearchNonExistingUser(monkeypatch,capsys,testDB,destroyTestDB):
+def test_SearchNonExistingUser(monkeypatch,capsys,testDB):
     inputs = iter(['Mr.','Burns'])
     desiredOutput = "They are not yet a part of the InCollege system\nSearch again: 0\n"
-    cursor, _= testDB
+    cursor, _, destroyTestDB = testDB
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
     try:
         inCollege.FindPerson1(cursor,"")
@@ -167,9 +163,9 @@ def test_userSuccessStory(capsys):
     output = capsys.readouterr().out
     assert output == desiredOutput
 
-def test_searchExistingUserWhileLoggedOut(monkeypatch,capsys,testDB,destroyTestDB):
+def test_searchExistingUserWhileLoggedOut(monkeypatch,capsys,testDB):
     desiredOutput = "They are a part of the InCollege system\nWould like to join them and sign up? Press 1\n"
-    cursor, _ = testDB
+    cursor, _, destroyTestDB = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
     ('homer','Simpson12@', 'homer', 'simpson'))
     inputs = iter(['homer','simpson'])
@@ -181,10 +177,10 @@ def test_searchExistingUserWhileLoggedOut(monkeypatch,capsys,testDB,destroyTestD
         assert output == desiredOutput
     destroyTestDB()
 
-def test_postingJob(monkeypatch,capsys,testDB,destroyTestDB):
+def test_postingJob(monkeypatch,capsys,testDB):
     desiredOuput = 'Posting job now\nTo post another job, press 1:\n'
     inputs = iter(['yes','Nuclear Safety Inspector','Inspect Saftety of Nuclear Power Plant (in Sector 7-G)','Mr. Burns','Springfield','37k'])
-    cursor, source = testDB
+    cursor, source, destroyTestDB = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
     ('mrburns','Simpson12@', 'montegomery', 'burns'))
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
