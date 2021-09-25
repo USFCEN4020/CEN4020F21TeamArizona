@@ -125,9 +125,9 @@ def Options(username):
 
 def UserSelection(option, username):
     if option == "search for a job":
-        SearchJob(username)
+        SearchJob(cursor,source,username)
     elif option == "find someone":
-        FindPerson(cursor,username)
+        FindPerson(cursor)
     elif option == "learn skill":
         SkillSelect(username)
     else:
@@ -135,7 +135,7 @@ def UserSelection(option, username):
         Options(username)
 
 
-def SearchJob(username):
+def SearchJob(cursor,source,username):
     post_job = input("Would you like to post a job?: ")
     
     if(post_job == "yes"):
@@ -170,7 +170,7 @@ def SearchJob(username):
             print("To post another job, press 1:")
             user = input()
             if user == "1":
-                SearchJob(username)
+                SearchJob(cursor,source,username)
             else:
                 Options(username)
                 print("")
@@ -196,7 +196,7 @@ def FindPerson1(cursor,username):
             print("Search again: 0")
             user = input()
             if user == "0":
-                FindPerson(username)
+                FindPerson(cursor)
             else:
                 Options(username)
             
@@ -206,7 +206,7 @@ def FindPerson1(cursor,username):
         print("Search again: 0")
         user = input()
         if user == "0":
-            FindPerson(username)
+            FindPerson(cursor)
         else:
             Options(username)
         
@@ -222,7 +222,6 @@ def FindPerson(cursor):
     items = cursor.fetchall()
     items = list(items)
     for item in items:
-
         if(first_Name == item[2] and last_Name == item[3]):
             print("They are a part of the InCollege system")
             print("Would like to join them and sign up? Press 1")
@@ -237,7 +236,7 @@ def FindPerson(cursor):
         print("Search again: 0")
         user = input()
         if user == "0":
-            FindPerson()
+            FindPerson(cursor)
         else:
             Main()
         
@@ -292,7 +291,7 @@ def Main():
         option = input()
 
         while option != "1" and option != "0" and option != "3" and option != "4":
-            input("Incorrect input. 0 for sign in, 1 for sign up, 3 for more information, search 4: ")
+            option = input("Incorrect input. 0 for sign in, 1 for sign up, 3 for more information, search 4: ")
 
         if option == "0":
             status, username = logIn(cursor)
@@ -301,7 +300,7 @@ def Main():
         elif option == "3":
             status = PlayVideo()
         elif option == "4":
-            status = FindPerson()
+            status = FindPerson(cursor)
 
 
         if status:

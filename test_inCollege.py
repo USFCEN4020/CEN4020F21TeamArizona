@@ -124,7 +124,7 @@ def test_SkillsAreDisplaying(monkeypatch,capsys):
         assert output == desiredOutput
 
 #Assert that if a existing user is found when searched
-def test_SearchExistingUser(monkeypatch,capsys,testDB,destroyTestDB):
+def test_SearchExistingUserWhileSignedIn(monkeypatch,capsys,testDB,destroyTestDB):
     inputs = iter(["homer","simpson"])
     desiredOutput = "They are a part of the InCollege system\nSearch again: 0\n"
     monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
@@ -153,8 +153,8 @@ def test_SearchNonExistingUser(monkeypatch,capsys,testDB,destroyTestDB):
 
 def test_video(monkeypatch, capsys):
     inputs = iter(['0',])
-    desiredOutput = "Video is now playing\n"
-    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+    desiredOutput = "Video is now playing\n\n"
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
         inCollege.PlayVideo()
     except(StopIteration):
@@ -166,3 +166,32 @@ def test_userSuccessStory(capsys):
     inCollege.successStory()
     output = capsys.readouterr().out
     assert output == desiredOutput
+
+def test_searchExistingUserWhileLoggedOut(monkeypatch,capsys,testDB,destroyTestDB):
+    desiredOutput = "They are a part of the InCollege system\nWould like to join them and sign up? Press 1\n"
+    cursor, _ = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+    ('homer','Simpson12@', 'homer', 'simpson'))
+    inputs = iter(['homer','simpson'])
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    try:
+        inCollege.FindPerson(cursor)
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    destroyTestDB()
+
+def test_postingJob(monkeypatch,capsys,testDB,destroyTestDB):
+    desiredOuput = 'Posting job now\nTo post another job, press 1:\n'
+    inputs = iter(['yes','Nuclear Safety Inspector','Inspect Saftety of Nuclear Power Plant (in Sector 7-G)','Mr. Burns','Springfield','37k'])
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+    ('mrburns','Simpson12@', 'montegomery', 'burns'))
+    monkeypatch.setattr('builtins.input',lambda _="":next(inputs))
+    try:
+        inCollege.SearchJob(cursor,source,"mrburns")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOuput
+    destroyTestDB()
+    
