@@ -119,7 +119,7 @@ def Options(username):
     print("Select Option")
     print("============================================================")
     UserOpt = input(
-        "Search for a Job | Find Someone | Learn Skill\n============================================================\n")
+        "Search for a Job | Find Someone | Learn Skill | More Information(Copyright and etc)\n============================================================\n")
 
     UserSelection(UserOpt.lower(), username)
 
@@ -130,6 +130,11 @@ def UserSelection(option, username):
         FindPerson(cursor)
     elif option == "learn skill":
         SkillSelect(username)
+    elif option == "more information":
+        print("Choose which one of the options below you would like to see:( 1 for Copyright, and other respectively) ")
+        PrivacyPolicy()
+        privacyOption = input()
+        MoreInformationOPT(privacyOption)
     else:
         "Invalid Selection"
         Options(username)
@@ -177,6 +182,8 @@ def SearchJob(cursor,source,username):
     else:       
         Options(username)
 
+def PrivacyPolicy():
+    print("Copyright Notice | About | Accessibility | User Agreement | Privacy Policy | Cookie Policy | Copyright Policy | Brand Policy | Language\n============================================================\n")
 
 #Search for person within the database and then ask user to join if person is found
 # if a person is not found print statement and return to main menu
@@ -273,6 +280,49 @@ def SelectedSkill(skill, username):
         print("Invalid Selection")
         Options(username)
 
+def GuestControls():
+    print("to turn off type 1 for InCollege Email, 2 for SMS, and 3 for Targeted Advertising features :")
+    orderedOptions = input()
+    if orderedOptions == "1":
+        print("under construction")
+    elif orderedOptions == "2":
+        print("under construction")
+    elif orderedOptions == "3":
+        print("under construction")
+def LanguageSetup():
+    print("Choose Language, 1 for English, 2 for Spanish")
+    languageOption = input()
+    if languageOption == "1":
+        print("English")
+    else:
+        print("Spanish")
+
+
+def MoreInformationOPT(privacyOption):
+    if privacyOption == "1":
+        print("under construction")
+    elif privacyOption == "2":
+        print("under construction")
+    elif privacyOption == "3":
+        print("under construction")
+    elif privacyOption == "4":
+        print("under construction")
+    elif privacyOption == "Privacy Policy" or privacyOption == "privacy policy":
+        print("which one of the settings you would like to see?")
+        print(" 1 for Guest Controls, 2 for Language Settings")
+        setting = input()
+        if setting == "1":
+            GuestControls()
+        else:
+            LanguageSetup()
+    elif privacyOption == "6":
+        print("under construction")
+    elif privacyOption == "7":
+        print("under construction")
+    elif privacyOption == "8":
+        print("under construction")
+    elif privacyOption == "9":
+        print("under construction")
 
 # ====================================================================================================
 
@@ -284,13 +334,16 @@ cursor = source.cursor()
 
 #main Function
 def Main():
-
+        print("============================================================")
         successStory()
+        print("============================================================")
+        PrivacyPolicy()
         print("Would you like to sign in or sign up? 0 for sign in, and 1 for sign up: ")
         print("3 for information video | Search Person 4")
+        print("5 for other information listed above(Privacy, and etc) Type Privacy Policy to change some settings")
         option = input()
 
-        while option != "1" and option != "0" and option != "3" and option != "4":
+        while option != "1" and option != "0" and option != "3" and option != "4" and option != "5":
             option = input("Incorrect input. 0 for sign in, 1 for sign up, 3 for more information, search 4: ")
 
         if option == "0":
@@ -301,6 +354,11 @@ def Main():
             status = PlayVideo()
         elif option == "4":
             status = FindPerson(cursor)
+        elif option == "5":
+            print("Choose which one of the options below you would like to see:( 1 for Copyright, and other respectively), Type Privacy Policy to change some settings ")
+            PrivacyPolicy()
+            privacyOption = input()
+            MoreInformationOPT(privacyOption)
 
 
         if status:
