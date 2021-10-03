@@ -26,7 +26,11 @@ def testDB():
         username TEXT PRIMARY KEY,
         password TEXT,
         firstName TEXT,
-        lastName TEXT
+        lastName TEXT,
+        email TEXT,
+         sms TEXT,
+         ad TEXT,
+        language TEXT
     );
     """
 
@@ -147,17 +151,18 @@ def test_MaxAccounts(monkeypatch, capsys, testDB):
     cursor.execute("DROP TABLE jobs;")
 
 # Asserting that 5 skills show up after logged in and skills option is selected
-def test_SkillsAreDisplaying(monkeypatch, capsys):
+def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
     inputs = iter(["learn skill"])
     desiredOutput = "Select Option\n============================================================\n______________________________________________________________\nC++ | Java | Python | SQL | JavaScript | No Selection\n______________________________________________________________\n"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
     try:
-        inCollege.Options("")
+        inCollege.Options(cursor, source, "homer")
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-
-
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 # Assert that if a existing user is found when searched
 def test_SearchExistingUserWhileSignedIn(monkeypatch, capsys, testDB):
@@ -193,15 +198,14 @@ def test_SearchNonExistingUser(monkeypatch, capsys, testDB):
 
 
 def test_video(monkeypatch, capsys):
-    inputs = iter(['0', ])
-    desiredOutput = "Video is now playing\n\n"
+    inputs = iter(['1', ])
+    desiredOutput = "Video is now playing\n\nThanks to inCollege I was able to meet with fellow college students and establish connections\nthat allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege\nI was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft\n--Alyssa (Arizona)\nWould you like to sign in or sign up? 0 for sign in, and 1 for sign up: \n3 for information video | Search Person 4\n5 for Useful Links | 6 for InCollege Important Links\n"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
         inCollege.PlayVideo()
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-
 
 def test_userSuccessStory(capsys):
     desiredOutput = "Thanks to inCollege I was able to meet with fellow college students and establish connections\nthat allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege\nI was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft\n--Alyssa (Arizona)\n"
@@ -259,3 +263,197 @@ def test_postingJob(monkeypatch, capsys, testDB):
         assert output == desiredOuput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink1(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright notice\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['1', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink2(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in about\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['2', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink3(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in accessibility\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['3', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink4(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in user agreement\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['4', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+def test_EmailNotifChange(monkeypatch, capsys, testDB):
+    desiredOutput = "InCollege email turned off"
+    inputs = iter(['1', "off"])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB;
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?);',
+                   ('homer', 'Simpson12@', 'homer', 'simpson', 'Spanish'))
+    source.commit()
+    try:
+        inCollege.GuestControls(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+def test_SMSchange(monkeypatch, capsys, testDB):
+    desiredOutput = "SMS turned on"
+    inputs = iter(['2', "on"])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB;
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?);',
+                   ('homer', 'Simpson12@', 'homer', 'simpson', 'Spanish'))
+    source.commit()
+    try:
+        inCollege.GuestControls(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+def test_AdChange(monkeypatch, capsys, testDB):
+    desiredOutput = "Targeted advertising turned off"
+    inputs = iter(['3', "off"])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB;
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?);',
+                   ('homer', 'Simpson12@', 'homer', 'simpson', 'Spanish'))
+    source.commit()
+    try:
+        inCollege.GuestControls(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+def test_InCollegeLink6(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in cookie policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['6', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink7(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['7', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink8(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in brand policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['8', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink9(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nSpanish\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['9', 'Spanish'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('homer', 'Simpson12@', 'homer', 'simpson'))
+    source.commit()
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+def test_InCollegeLink9WithSpanish(monkeypatch, capsys, testDB):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nEnglish\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['9', 'English'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?);',
+                   ('homer', 'Simpson12@', 'homer', 'simpson', 'Spanish'))
+    source.commit()
+    try:
+        inCollege.InCollegeLink(cursor, source, "homer")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+
+
+# Asserting successful after testing useful links
+def test_general(monkeypatch, capsys):
+    inputs = iter(["2","3","4"])
+    desiredOutput = "Under construction"
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.UsefulLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+
