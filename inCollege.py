@@ -2,9 +2,14 @@
 #Kevin Girjanand, U68848880
 #Jesse Gonzales, U96407722
 
-
 import time as t
 import sqlite3 as sql
+import main
+
+#connects to the database file that was created
+sqlfile = "database.sqlite"
+source = sql.connect(sqlfile)
+cursor = source.cursor()
 
 def logIn(cursor):
     cont = True
@@ -103,7 +108,7 @@ def PlayVideo():
     t.sleep(4)
     user  = input("Sign up: 0\n")
     if user != "0":
-        Main()
+        main.Main()
     else:
         signUp(cursor, source)
         
@@ -112,14 +117,204 @@ def successStory():
     print("that allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege")
     print("I was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft")
     print("--Alyssa (Arizona)")
+    
+def UsefulLink(cursor):
+    print("General (1), BrowseInCollege (2), Business Solutions (3), Directories (4)")
+    link = input("Please enter a number to go to a link: ")
+    
+    if(link == "1"):
+        General(cursor)
+    elif(link == "2"):
+        print("Under construction")
+        #main.Main()
+    elif(link == "3"):
+        print("Under construction")
+        #main.Main()
+    elif(link == "4"):
+        print("Under construction")
+        #main.Main()
+    else:
+        print("Invalid selection")
+        UsefulLink(cursor)
+    
+    print("")
+    
+    
+def General(cursor):
+    print("Sign Up (1), Help Center (2), About(3), Press (4), Blog(5), Careers(6), and Developers (7)")
+    link = input("Please enter a number to go to a link: ")
+    
+    if(link == "1"):
+        signUp(cursor, source)
+    elif(link == "2"):
+        print("We're here to help")
+        General(cursor)
+    elif(link == "3"):
+        print("In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide")
+        General(cursor)
+    elif(link == "4"):
+        print("In College Pressroom: Stay on top of the latest news, updates, and reports")
+        General(cursor)
+    elif(link == "5"):
+        print("Under construction")
+        General(cursor)
+    elif(link == "6"):
+        print("Under construction")
+        General(cursor)
+    elif(link == "7"):
+        print("Under construction")
+        General(cursor)
+    else:
+        print("Invalid selection")
+        UsefulLink(cursor)    
+    
+    
+def InCollegeLink(cursor, source, username):
+    print("Copyright Notice (1), About (2), Accessibility (3)")
+    print("User Agreement (4), Privacy Policy (5), Cookie Policy (6)")
+    print("Copyright Policy (7), Brand Policy (8), Languages (9)")
+    link = input("Please enter a number to go to a link: ")
+    
+    if(link == "1"):
+        print("Copyright 2021 InCollege USA. All rights reserved.")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "2"):
+        print("An Encouraging online platform for College Students")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "3"):
+        print("As part of our commitment to accessibility we continuously audit our products—internally using assistive technology like screen reading software.")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "4"):
+        print("Please read this Mobile Application End User License Agreement (“EULA”) carefully before downloading or using the InCollege Inc.")
+        print("(“InCollege”) application (“Mobile App”), which allows You to access InCollege’s internet-delivered service (“Subscription Service”)")
+        print(" from Your mobile device. This EULA forms a binding legal agreement between you (and any other entity on whose behalf you accept these terms)")
+        print(" (collectively “You” or “Your”) and InCollege (each separately a “Party” and collectively the “Parties”) as of the date you download the Mobile App. ")
+        print("Your use of the Mobile App is subject to this EULA and Your use of the Subscription Service will remain subject to the existing agreement governing such use (the “Subscription Agreement”). ")
+        print("With respect to the use of the Mobile App, and to the extent the Subscription Agreement conflicts with this EULA, the terms of this EULA will govern and control solely with respect to use of the Mobile App. ")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "5"):
+        print("InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). ")
+        print("This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).")
+        print("Please read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.")
+        print("We reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.")
+        print("You are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy")
+        print(" by your continued use of the Application after the date such revised Privacy Policy is posted.")
+        print("")
+        GuestControls(cursor, source, username)
+    elif(link == "6"):
+        print("Performance cookies: these types of cookies recognise and count the number of visitors to a website and users of an App and to see how users move around ")
+        print("in each. This information is used to improve the way the website and App work.")
+        print("Functionality cookies: these cookies recognise when you return to a website or App, enable personalised content and recognise and remember your preferences.")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "7"):
+        print("You can't post someone else’s private or confidential information without permission or do anything that")
+        print("violates someone else's rights, including intellectual property rights (e.g., copyright infringement, trademark infringement, counterfeit, or pirated goods).")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "8"):
+        print("This policy governs the use of all InCollege trademarks for any purpose and applies to the entire InCollege system. Consistency")
+        print("in the use of Incollege trademarks strengthens their value and our ability to protect them from unauthorized use. ")
+        print("")
+        InCollegeLink(cursor, source, username)
+    elif(link == "9"):
+        LanguageSetup(cursor, source, username)
+    else:
+        print("Invalid selection")
+        print("")
+        InCollegeLink(cursor, source, username)  
+    
+    print("")
+
+
+def GuestControls(cursor, source, username):
+    feature = input("Which feature would you like to adjust (type 1 for InCollege Email, 2 for SMS, 3 for Targeted Advertising): ")
+    setting = input("Would you like to turn it off or on?: ")
+    
+    cursor.execute("SELECT * FROM users")
+    items = cursor.fetchall()
+    items = list(items)
+    for item in items:
+        if(item[0] == username):
+            if(feature == "1"):
+                addOption = """
+                INSERT INTO users (email) VALUES (?);"""
+                cursor.execute(addOption,(setting,))
+                source.commit()
+            elif(feature == "2"):
+                addOption = """
+                INSERT INTO users (sms) VALUES (?);"""
+                cursor.execute(addOption,(setting,))
+                source.commit()
+            elif(feature == "3"):
+                addOption = """
+                INSERT INTO users (ad) VALUES (?);"""
+                cursor.execute(addOption,(setting,))
+                source.commit()
+            else:
+                print("Invalid entry")
+                GuestControls(cursor, source, username)
+    
+    
+    if(feature == "1"):
+        if(setting == "off"):
+            print("InCollege email turned off")
+        elif(setting == "on"):
+            print("Incollege email turned on")
+    elif(feature == "2"):
+        if(setting == "off"):
+            print("SMS turned off")
+        elif(setting == "on"):
+            print("SMS turned on")
+    elif(feature == "3"):
+        if(setting == "off"):
+            print("Targeted advertising turned off")
+        elif(setting == "on"):
+            print("Targeted advertising turned on")
+    
+    
+        
+def LanguageSetup(cursor, source, username):
+    language = input("For language of choice, type English or type Spanish: ")
+    addOption = """
+    INSERT INTO users (language) VALUES (?);"""
+
+    cursor.execute("SELECT * FROM users")
+    items = cursor.fetchall()
+    items = list(items)
+    for item in items:
+        if(item[0] == username):
+            if(language == "English"):
+                addOption = """
+                INSERT INTO users (language) VALUES (?);"""
+                cursor.execute(addOption,(language,))
+                source.commit()
+            elif(language == "Spanish"):
+                addOption = """
+                INSERT INTO users (language) VALUES (?);"""
+                cursor.execute(addOption,(language,))
+                source.commit()
+            else:
+                print("Invalid entry")
+                LanguageSetup(cursor, source, username)
+    
+    if language == "English":
+        print("English")
+    elif language == "Spanish":
+        print("Spanish")
+
 
 # Functions After Logged In
 # ====================================================================================================
-def Options(username):
+def Options(cursor, source, username):
     print("Select Option")
     print("============================================================")
     UserOpt = input(
-        "Search for a Job | Find Someone | Learn Skill | More Information(Copyright and etc)\n============================================================\n")
+        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links\n============================================================\n")
 
     UserSelection(UserOpt.lower(), username)
 
@@ -130,15 +325,13 @@ def UserSelection(option, username):
         FindPerson(cursor)
     elif option == "learn skill":
         SkillSelect(username)
-    elif option == "more information":
-        print("Choose which one of the options below you would like to see:( 1 for Copyright, and other respectively) ")
-        PrivacyPolicy()
-        privacyOption = input()
-        MoreInformationOPT(privacyOption)
+    elif option == "useful links":
+        UsefulLink(cursor)
+    elif option == "incollege links":
+        InCollegeLink(cursor, source, username)
     else:
         "Invalid Selection"
-        Options(username)
-
+        Options(cursor, source, username)
 
 def SearchJob(cursor,source,username):
     post_job = input("Would you like to post a job?: ")
@@ -177,13 +370,11 @@ def SearchJob(cursor,source,username):
             if user == "1":
                 SearchJob(cursor,source,username)
             else:
-                Options(username)
+                Options(cursor,source,username)
                 print("")
     else:       
-        Options(username)
+        Options(cursor,source,username)
 
-def PrivacyPolicy():
-    print("Copyright Notice | About | Accessibility | User Agreement | Privacy Policy | Cookie Policy | Copyright Policy | Brand Policy | Language\n============================================================\n")
 
 #Search for person within the database and then ask user to join if person is found
 # if a person is not found print statement and return to main menu
@@ -236,7 +427,7 @@ def FindPerson(cursor):
             if user == "1":
                 signUp(cursor,source)
             else:
-                Main() 
+                main.Main() 
     #If they do not find a person they can search again or return to main menu   
     if(found == False):
         print("They are not yet a part of the InCollege system")
@@ -245,7 +436,7 @@ def FindPerson(cursor):
         if user == "0":
             FindPerson(cursor)
         else:
-            Main()
+            main.Main()
         
     
     print("")
@@ -279,93 +470,3 @@ def SelectedSkill(skill, username):
     else:
         print("Invalid Selection")
         Options(username)
-
-def GuestControls():
-    print("to turn off type 1 for InCollege Email, 2 for SMS, and 3 for Targeted Advertising features :")
-    orderedOptions = input()
-    if orderedOptions == "1":
-        print("under construction")
-    elif orderedOptions == "2":
-        print("under construction")
-    elif orderedOptions == "3":
-        print("under construction")
-def LanguageSetup():
-    print("Choose Language, 1 for English, 2 for Spanish")
-    languageOption = input()
-    if languageOption == "1":
-        print("English")
-    else:
-        print("Spanish")
-
-
-def MoreInformationOPT(privacyOption):
-    if privacyOption == "1":
-        print("under construction")
-    elif privacyOption == "2":
-        print("under construction")
-    elif privacyOption == "3":
-        print("under construction")
-    elif privacyOption == "4":
-        print("under construction")
-    elif privacyOption == "Privacy Policy" or privacyOption == "privacy policy":
-        print("which one of the settings you would like to see?")
-        print(" 1 for Guest Controls, 2 for Language Settings")
-        setting = input()
-        if setting == "1":
-            GuestControls()
-        else:
-            LanguageSetup()
-    elif privacyOption == "6":
-        print("under construction")
-    elif privacyOption == "7":
-        print("under construction")
-    elif privacyOption == "8":
-        print("under construction")
-    elif privacyOption == "9":
-        print("under construction")
-
-# ====================================================================================================
-
-
-#connects to the database file that was created
-sqlfile = "database.sqlite"
-source = sql.connect(sqlfile)
-cursor = source.cursor()
-
-#main Function
-def Main():
-        print("============================================================")
-        successStory()
-        print("============================================================")
-        PrivacyPolicy()
-        print("Would you like to sign in or sign up? 0 for sign in, and 1 for sign up: ")
-        print("3 for information video | Search Person 4")
-        print("5 for other information listed above(Privacy, and etc) Type Privacy Policy to change some settings")
-        option = input()
-
-        while option != "1" and option != "0" and option != "3" and option != "4" and option != "5":
-            option = input("Incorrect input. 0 for sign in, 1 for sign up, 3 for more information, search 4: ")
-
-        if option == "0":
-            status, username = logIn(cursor)
-        elif option == "1":
-            status, username = signUp(cursor,source)
-        elif option == "3":
-            status = PlayVideo()
-        elif option == "4":
-            status = FindPerson(cursor)
-        elif option == "5":
-            print("Choose which one of the options below you would like to see:( 1 for Copyright, and other respectively), Type Privacy Policy to change some settings ")
-            PrivacyPolicy()
-            privacyOption = input()
-            MoreInformationOPT(privacyOption)
-
-
-        if status:
-            print("Logged in!")
-            # use user to bounce around the functions as needed
-            user = Options(username)
-
-        source.close()
-if __name__ == "__main__":
-    Main()

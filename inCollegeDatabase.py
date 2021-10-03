@@ -14,7 +14,11 @@ CREATE TABLE users
     username TEXT PRIMARY KEY,
     password TEXT,
     firstName TEXT,
-    lastName TEXT
+    lastName TEXT,
+    email TEXT,
+    sms TEXT,
+    ad TEXT,
+    language TEXT
 );
 
 """
@@ -34,8 +38,25 @@ CREATE TABLE jobs
 );
 
 """
+
+# =============================================================================
+# createOptionTable = """
+# 
+# CREATE TABLE options
+# {
+#      
+#      email TEXT,
+#      sms TEXT,
+#      ad TEXT,
+#      language TEXT
+# };
+# 
+# """
+# =============================================================================
+
 cursor.execute(createTable)
 cursor.execute(createJobTable)
+#cursor.execute(createOptionTable)
 source.commit()
 
 #INPUT ANY OTHER NECESSARY TABLE
