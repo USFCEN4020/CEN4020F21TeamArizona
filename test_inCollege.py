@@ -63,9 +63,8 @@ def test_FailedLogIn(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 # Asserting that sign ups with weak passwords won't be allowed
@@ -74,17 +73,15 @@ def test_WeakPasswords(monkeypatch, capsys, testDB):
              iter(['bart', 'Simpson@']), iter(['bart', 'simpson12@'])]
     desiredOutput = "Invalid option. Password must between 8 and 12 characters, have a digit, capital letter, and a special character\n"
     cursor, source = testDB
-    try:
-        for inputs in tests:
-            monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
-            try:
-                inCollege.signUp(cursor, source)
-            except(StopIteration):
-                output = capsys.readouterr().out
-                assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    for inputs in tests:
+        monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+        try:
+            inCollege.signUp(cursor, source)
+        except(StopIteration):
+            output = capsys.readouterr().out
+            assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 # Asserting successful sign up when the password is strong enough
@@ -98,9 +95,8 @@ def test_ValidSignUp(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 # Asserting that sign ups where the username already exists will fail
 def test_UsernameExistsInSignUp(monkeypatch, capsys, testDB):
@@ -117,9 +113,8 @@ def test_UsernameExistsInSignUp(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 # Asserting successful login when account is in database
 def test_SuccessfullLogin(monkeypatch, capsys, testDB):
@@ -135,9 +130,8 @@ def test_SuccessfullLogin(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_MaxAccounts(monkeypatch, capsys, testDB):
@@ -146,17 +140,15 @@ def test_MaxAccounts(monkeypatch, capsys, testDB):
              iter(['lisa', 'Simpson12@', 'Lisa', 'Simpson']), iter(['mrburns', 'Simpson12@', 'Mr.', 'Burns'])]
     desiredOutput = "Unable to sign up. There is already the maximum number of users.\n"
     cursor, source = testDB
-    try:
-        for inputs in tests:
-            monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
-            try:
-                inCollege.signUp(cursor, source)
-            except(StopIteration):
-                output = capsys.readouterr().out
-                assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    for inputs in tests:
+        monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+        try:
+            inCollege.signUp(cursor, source)
+        except(StopIteration):
+            output = capsys.readouterr().out
+            assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 # Asserting that 5 skills show up after logged in and skills option is selected
 def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
@@ -169,9 +161,8 @@ def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 # Assert that if a existing user is found when searched
 def test_SearchExistingUserWhileSignedIn(monkeypatch, capsys, testDB):
@@ -187,9 +178,8 @@ def test_SearchExistingUserWhileSignedIn(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 # Assert that if a non existing user is not found when searched
@@ -203,9 +193,8 @@ def test_SearchNonExistingUser(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_video(monkeypatch, capsys):
@@ -238,9 +227,8 @@ def test_searchExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_searchNonExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
     desiredOutput = "They are not yet a part of the InCollege system\nSearch again: 0\n"
@@ -255,9 +243,8 @@ def test_searchNonExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_postingJob(monkeypatch, capsys, testDB):
     desiredOuput = 'Posting job now\nTo post another job, press 1:\n'
@@ -274,13 +261,12 @@ def test_postingJob(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOuput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink1(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright notice\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nCopyright 2021 InCollege USA. All rights reserved.\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['1', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -290,13 +276,12 @@ def test_InCollegeLink1(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink2(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in about\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nAn Encouraging online platform for College Students\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['2', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -306,13 +291,12 @@ def test_InCollegeLink2(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink3(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in accessibility\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nAs part of our commitment to accessibility we continuously audit our products—internally using assistive technology like screen reading software.\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['3', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -321,13 +305,12 @@ def test_InCollegeLink3(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink4(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in user agreement\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nPlease read this Mobile Application End User License Agreement (“EULA”) carefully before downloading or using the InCollege Inc.\n(“InCollege”) application (“Mobile App”), which allows You to access InCollege’s internet-delivered service (“Subscription Service”)\n from Your mobile device. This EULA forms a binding legal agreement between you (and any other entity on whose behalf you accept these terms)\n (collectively “You” or “Your”) and InCollege (each separately a “Party” and collectively the “Parties”) as of the date you download the Mobile App. \nYour use of the Mobile App is subject to this EULA and Your use of the Subscription Service will remain subject to the existing agreement governing such use (the “Subscription Agreement”). \nWith respect to the use of the Mobile App, and to the extent the Subscription Agreement conflicts with this EULA, the terms of this EULA will govern and control solely with respect to use of the Mobile App. \n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['4', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -336,12 +319,11 @@ def test_InCollegeLink4(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_EmailNotifChange(monkeypatch, capsys, testDB):
-    desiredOutput = "InCollege email turned off"
+    desiredOutput = "InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). \nThis Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).\nPlease read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.\nWe reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.\nYou are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy\n by your continued use of the Application after the date such revised Privacy Policy is posted.\n\nInCollege email turned off"
     inputs = iter(['1', "off"])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB;
@@ -353,12 +335,11 @@ def test_EmailNotifChange(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_SMSchange(monkeypatch, capsys, testDB):
-    desiredOutput = "SMS turned on"
+    desiredOutput = "InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). \nThis Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).\nPlease read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.\nWe reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.\nYou are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy\n by your continued use of the Application after the date such revised Privacy Policy is posted.\n\nSMS turned on"
     inputs = iter(['2', "on"])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB;
@@ -370,12 +351,11 @@ def test_SMSchange(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_AdChange(monkeypatch, capsys, testDB):
-    desiredOutput = "Targeted advertising turned off"
+    desiredOutput = "InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). \nThis Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).\nPlease read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.\nWe reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.\nYou are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy\n by your continued use of the Application after the date such revised Privacy Policy is posted.\n\nTargeted advertising turned off"
     inputs = iter(['3', "off"])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB;
@@ -387,12 +367,11 @@ def test_AdChange(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_InCollegeLink6(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in cookie policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nPerformance cookies: these types of cookies recognise and count the number of visitors to a website and users of an App and to see how users move around \nin each. This information is used to improve the way the website and App work.\nFunctionality cookies: these cookies recognise when you return to a website or App, enable personalised content and recognise and remember your preferences.\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['6', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -401,13 +380,12 @@ def test_InCollegeLink6(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink7(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nYou can't post someone else’s private or confidential information without permission or do anything that\nviolates someone else's rights, including intellectual property rights (e.g., copyright infringement, trademark infringement, counterfeit, or pirated goods).\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['7', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -416,13 +394,12 @@ def test_InCollegeLink7(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink8(monkeypatch, capsys, testDB):
-    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in brand policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nThis policy governs the use of all InCollege trademarks for any purpose and applies to the entire InCollege system. Consistency\nin the use of Incollege trademarks strengthens their value and our ability to protect them from unauthorized use. \n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
     inputs = iter(['8', ])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -431,9 +408,8 @@ def test_InCollegeLink8(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink9(monkeypatch, capsys, testDB):
@@ -449,9 +425,8 @@ def test_InCollegeLink9(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 def test_InCollegeLink9WithSpanish(monkeypatch, capsys, testDB):
     desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nEnglish\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
@@ -466,9 +441,8 @@ def test_InCollegeLink9WithSpanish(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    finally:
-        cursor.execute("DROP TABLE users;")
-        cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
 
 
 # Asserting successful after testing useful links
@@ -481,3 +455,5 @@ def test_general(monkeypatch, capsys):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
+
+
