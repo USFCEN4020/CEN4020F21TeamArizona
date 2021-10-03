@@ -259,3 +259,95 @@ def test_postingJob(monkeypatch, capsys, testDB):
         assert output == desiredOuput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+
+
+def test_InCollegeLink1(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright notice\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['1', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_InCollegeLink2(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in about\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['2', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_InCollegeLink3(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in accessibility\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['3', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_InCollegeLink4(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in user agreement\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['4', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+'''
+def test_InCollegeLink5(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright notice\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['5', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+'''
+def test_InCollegeLink6(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in cookie policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['6', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_InCollegeLink7(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['7', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_InCollegeLink8(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in brand policy\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['8', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+'''
+def test_InCollegeLink9(monkeypatch, capsys):
+    desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nFill-in copyright notice\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
+    inputs = iter(['9', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.InCollegeLink("")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+'''
