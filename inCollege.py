@@ -310,6 +310,7 @@ def LanguageSetup(cursor, source, username):
 
 # Functions After Logged In
 # ====================================================================================================
+#Make an option to go into the profile function. 
 def Options(cursor, source, username):
     print("Select Option")
     print("============================================================")
@@ -470,3 +471,7 @@ def SelectedSkill(skill, username):
     else:
         print("Invalid Selection")
         Options(username)
+
+#Write the details about how to profile will work here  (Full details on jira issues) 
+def UserProfile(username):
+    pass
