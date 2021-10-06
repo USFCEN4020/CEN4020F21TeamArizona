@@ -36,6 +36,18 @@ CREATE TABLE jobs
     first TEXT,
     last TEXT
 );
+"""
+createProfileTable = """
+
+CREATE TABLE profiles
+(
+    title TEXT,
+    major TEXT,
+    university  TEXT,
+    bio TEXT,
+    experience TEXT,
+    education TEXT NOT NULL
+);
 
 """
 
@@ -56,6 +68,7 @@ CREATE TABLE jobs
 
 cursor.execute(createTable)
 cursor.execute(createJobTable)
+cursor.execute(createProfileTable)
 #cursor.execute(createOptionTable)
 source.commit()
 
