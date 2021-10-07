@@ -11,6 +11,9 @@ sqlfile = "database.sqlite"
 source = sql.connect(sqlfile)
 cursor = source.cursor()
 
+#Mini function that will capitalize all words in a string
+capitalizeWords = lambda words : " ".join([word.capitalize() for word in words.split()])
+
 def logIn(cursor):
     cont = True
     while cont:
@@ -472,6 +475,5 @@ def SelectedSkill(skill, username):
         print("Invalid Selection")
         Options(username)
 
-#Write the details about how to profile will work here  (Full details on jira issues) 
-def UserProfile(username):
+def updateProfile(cursor,username,fields={}):
     pass
