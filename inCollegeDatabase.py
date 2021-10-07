@@ -41,12 +41,16 @@ createProfileTable = """
 
 CREATE TABLE profiles
 (
+    belongsTo TEXT,
     title TEXT,
     major TEXT,
     university  TEXT,
     bio TEXT,
     experience TEXT,
-    education TEXT NOT NULL
+    education TEXT NOT NULL,
+    CONSTRAINT belongsTo
+        FOREIGN KEY(belongsTo) REFERENCES users(username)
+        ON DELETE CASCADE
 );
 
 """
