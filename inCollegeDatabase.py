@@ -37,6 +37,27 @@ CREATE TABLE jobs
     last TEXT
 );
 """
+
+createProfileJobsTable = """
+    
+    CREATE TABLE profileJobs
+    (
+        jobID INTEGER PRIMARY KEY,
+        fromUser TEXT,
+        title TEXT,
+        employer TEXT,
+        location TEXT,
+        dateStarted DATE,
+        dateEnded DATE,
+        description TEXT,
+        CONSTRAINT fromUser
+            FOREIGN KEY(fromUser) REFERENCES users(username)
+            ON DELETE CASCADE
+
+    )
+
+"""
+
 createProfileTable = """
 
 CREATE TABLE profiles
@@ -45,12 +66,13 @@ CREATE TABLE profiles
     title TEXT,
     major TEXT,
     university  TEXT,
-    bio TEXT,
-    experience TEXT,
-    education TEXT NOT NULL,
+    about TEXT,
+    degree TEXT,
+    yearsAtUni INTEGER,
     CONSTRAINT belongsTo
         FOREIGN KEY(belongsTo) REFERENCES users(username)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    PRIMARY KEY(belongsTo)
 );
 
 """
@@ -73,6 +95,7 @@ CREATE TABLE profiles
 cursor.execute(createTable)
 cursor.execute(createJobTable)
 cursor.execute(createProfileTable)
+cursor.execute(createProfileJobsTable)
 #cursor.execute(createOptionTable)
 source.commit()
 
