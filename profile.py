@@ -1,14 +1,14 @@
-# Utility Lambdas:
+# Utility Lambda:
 
-capitalizeWords = lambda words: " ".join([word.captalize() for word in words.split()])
+capitalizeWords = lambda words: " ".join([word.capitalize() for word in words.split()])
 
 
 class Profile:
     def __init__(self,username,title=None,major=None,university=None,about=None,degree=None,yearsAtUni=None,experience=[]):
         self.username = username
         self.title = title
-        self.major = capitalizeWords(major)
-        self.university = capitalizeWords(university)
+        self.major = capitalizeWords(major) if major else None
+        self.university = capitalizeWords(university) if university else None
         self.about = about
         self.experience = experience
         self.degree = degree
@@ -48,8 +48,10 @@ def readProfile(cursor, username):
     cursor.execute(f"SELECT * FROM profiles WHERE belongsTo = '{username}'")
     profile = cursor.fetchone()
     cursor.execute(f"SELECT * FROM profileJobs WHERE fromUser = '{username}'")
-    profileJobs = [ProfileJob(*job[2:]) for job in cursor.fetchall()]
-    return Profile(*profile,profileJobs)
+    if profile:
+        profileJobs = [ProfileJob(*job[2:]) for job in cursor.fetchall()]
+        return Profile(*profile,profileJobs)
+    return None
 
 def updateProfile(cursor, connection, profile):
     with connection:
