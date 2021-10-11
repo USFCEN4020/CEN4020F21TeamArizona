@@ -450,28 +450,30 @@ def FindPerson(cursor):
     print("")
 
 #Profile creation
-def inProfile(cursor,source,username):
+def inProfile(cursor,source,username, c):
     result = profile.readProfile(cursor,username)
     if not result:
         print("You don't have a profile, would you like to create one? Type 'yes' to create it")
         choice = input()
         if choice.lower() == "yes":
             newProfile = profile.Profile(username)
-            EditProfile(newProfile)
+            EditProfile(newProfile, c)
             profile.createProfile(cursor, source, newProfile)
         Options(cursor,source,username)
         #inform user they don't have a profile and offer options to create or go back
     else:
         printProfile(result)
         print("Would you like to update your profile? type 'yes' to update it")
+        
         choice = input()
         if choice.lower() == "yes":
-            EditProfile(result)
+            EditProfile(result, c)
             profile.updateProfile(cursor, source, result)
         Options(cursor,source,username)
 
 #Will get the desired changes to profile and return the profile object
-def EditProfile(profile):
+#added cursor so that test_inCollege can pass input to the questions
+def EditProfile(profile, cursor):
     if profile.title:
         message = f"The title of your profile is {profile.title}. Would you like to change it? 'yes' to change it"
     else:
