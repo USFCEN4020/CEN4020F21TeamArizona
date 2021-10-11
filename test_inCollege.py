@@ -7,11 +7,14 @@
 # How to mock consecutive calls to input() with pytest - https://stackoverflow.com/questions/59986625/how-to-simulate-two-consecutive-console-inputs-with-pytest-monkeypatch
 # How to read stdout with pytest - https://docs.pytest.org/en/6.2.x/capture.html
 
+from sqlite3.dbapi2 import Cursor
+
+
 import inCollege
 import sqlite3 as sql
 import pytest
 import os
-
+import profile
 # Creating a test database to not interfere with data from the primary one
 TEST_DB_FILENAME = "test_database.sqlite"
 
@@ -20,8 +23,9 @@ def testDB():
     #os.system(f"python3 inCollegeDatabase.py {TEST_DB_FILENAME}")
     source = sql.connect(TEST_DB_FILENAME)
     cursor = source.cursor()
+    
     createTable = """
-    CREATE TABLE users
+    CREATE TABLE IF NOT EXISTS users
     (
         username TEXT PRIMARY KEY,
         password TEXT,
@@ -35,7 +39,7 @@ def testDB():
     """
 
     createJobTable = """
-    CREATE TABLE jobs
+    CREATE TABLE IF NOT EXISTS jobs
     (
         title TEXT,
         description TEXT,
@@ -46,8 +50,45 @@ def testDB():
         last TEXT
     );
     """
+
+    createProfileJobsTable = """
+    CREATE TABLE IF NOT EXISTS profileJobs
+    (
+        jobID INTEGER PRIMARY KEY,
+        fromUser TEXT,
+        title TEXT,
+        employer TEXT,
+        location TEXT,
+        dateStarted DATE,
+        dateEnded DATE,
+        description TEXT,
+        CONSTRAINT fromUser
+            FOREIGN KEY(fromUser) REFERENCES users(username)
+            ON DELETE CASCADE
+    )
+    """
+
+    createProfileTable = """
+    CREATE TABLE IF NOT EXISTS profiles
+    (
+        belongsTo TEXT,
+        title TEXT,
+        major TEXT,
+        university  TEXT,
+        about TEXT,
+        degree TEXT,
+        yearsAtUni INTEGER,
+        CONSTRAINT belongsTo
+            FOREIGN KEY(belongsTo) REFERENCES users(username)
+            ON DELETE CASCADE,
+        PRIMARY KEY(belongsTo)
+    );
+    """
+
     cursor.execute(createTable)
     cursor.execute(createJobTable)
+    cursor.execute(createProfileTable)
+    cursor.execute(createProfileJobsTable)
     source.commit()
     return cursor, source
 
@@ -65,6 +106,8 @@ def test_FailedLogIn(monkeypatch, capsys, testDB):
         assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE profiles;")
+    
 
 
 # Asserting that sign ups with weak passwords won't be allowed
@@ -97,6 +140,7 @@ def test_ValidSignUp(monkeypatch, capsys, testDB):
         assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE profiles;")
 
 # Asserting that sign ups where the username already exists will fail
 def test_UsernameExistsInSignUp(monkeypatch, capsys, testDB):
@@ -115,6 +159,7 @@ def test_UsernameExistsInSignUp(monkeypatch, capsys, testDB):
         assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE profiles;")
 
 # Asserting successful login when account is in database
 def test_SuccessfullLogin(monkeypatch, capsys, testDB):
@@ -132,6 +177,7 @@ def test_SuccessfullLogin(monkeypatch, capsys, testDB):
         assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE profiles")
 
 
 def test_MaxAccounts(monkeypatch, capsys, testDB):
@@ -149,6 +195,7 @@ def test_MaxAccounts(monkeypatch, capsys, testDB):
             assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+    
 
 # Asserting that 5 skills show up after logged in and skills option is selected
 def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
@@ -278,6 +325,7 @@ def test_InCollegeLink1(monkeypatch, capsys, testDB):
         assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE profiles;")
 
 
 def test_InCollegeLink2(monkeypatch, capsys, testDB):
@@ -456,4 +504,168 @@ def test_general(monkeypatch, capsys):
         output = capsys.readouterr().out
         assert output == desiredOutput
 
+#function works but does not account for input question
+def test_ViewProfile(monkeypatch, capsys, testDB):
+    inputs = iter(["n"])
 
+    #accounts for last line of output not used atm
+    end_statement = "Would you like to update your profile? type 'yes' to update it"
+    
+    #iterates through inputs not used atm 
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    
+    #connects to database and adds profilej for homer
+    cursor, source = testDB
+    cursor.execute("INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?);",
+                   ('homer', 'Homer Simpson', 'Computer Science', 'Su', 'N/a', 'Bs', 4))
+    
+    #reads profile and checks the printed function to the expected
+    #output
+    prof = profile.readProfile(cursor, 'homer')
+    out = inCollege.printProfile(prof)
+    desiredOutput = str(out)
+    try:
+        #since we just care about the printing of the menu test using the printProfile function 
+        inCollege.printProfile(prof)
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+        
+    cursor.execute("DROP TABLE profiles;")
+
+#must be able to edit profile/ update profile
+def test_EditProfile(monkeypatch, capsys, testDB):
+    #inputs to answer for editing the profile
+    inputs = iter(['n', 'yes', 'Computer Science', 'n', 'n', 'n', 'n', 'n'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    #insert homer into testDB
+    source,cursor = testDB 
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    
+    homer = profile.readProfile(source, 'homer')
+    #make profile to check to make sure edits are valid
+    prof = profile.Profile('homer', 'Engineer', 'Computer Science', 'Su', 'Na', 'Bs', 4)
+    out = inCollege.printProfile(prof)
+    desiredOutput = str(out)
+    
+    try:
+       inCollege.EditProfile(homer,"")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+        
+    cursor.execute("DROP TABLE profiles;")
+
+#must be able to partially put in profile information 
+def test_TryPartial(monkeypatch, capsys, testDB):
+    inputs = iter(['yes','yes','Homer','n','n','n','n', 'n'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+    #make homer user
+    source,cursor = testDB
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'None', 'None', 'None', 'None', 'None', 4))
+
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('Homer', 'None', 'None', 'None', 'None', 'None', 4))
+    #homer profile to check output against Homer
+    homer = profile.readProfile(source, 'homer')
+    prof =  profile.readProfile(source, 'Homer')
+    out = inCollege.printProfile(prof)
+    desiredOutput = str(out)
+
+    try:
+        #edit homer information, change homer -> Homer and leave rest partial
+        #monkeypatch uses "" to pass input to functions
+        inCollege.EditProfile(homer,"")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    
+# Must be able to enter the necessary profile info
+def test_ProfileInfo(monkeypatch, capsys, testDB):
+    inputs = iter(['yes', 'yes', 'Homer', 'yes', 'Physics', 'yes', 'Su', 'Im homer simpson', 'n'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'homer', 'simpson', 'English'))
+    source.commit()
+
+    try:
+        inCollege.inProfile(cursor, source, 'homer', "")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output
+
+# Must be able to enter text into the About section for a profile
+def test_AboutInfo(monkeypatch, capsys, testDB):
+    inputs = iter(['yes', 'yes', 'Bart', 'yes', 'Computer Science', 'yes', 'Bs', 'According to all known laws of aviation, there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees do not care what humans think impossible.', 'n'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?)',
+                    ('bart', 'Simpson13*', 'bart', 'simpson', 'English'))
+    source.commit()
+
+    try:
+        inCollege.inProfile(cursor, source, 'bart', "")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output
+
+# Must be able to enter information for the Education section in a profile
+def test_EducationInfo(monkeypatch, capsys, testDB):
+    inputs = iter(['yes', 'yes', 'Bob', 'yes', 'Computer Science', 'yes', 'Bs', 'There is nothing about me', 'n',
+                   'n', 'yes', 'Bachelors', 'yes', '3'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?)',
+                    ('Bob', 'Bobby123*', 'bob', 'ross', 'English'))
+    source.commit()
+
+    try:
+        inCollege.inProfile(cursor, source, 'Bob', "")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output
+
+# Must convert the major and university to have the first letter be uppercase for each word
+def test_NameConv(monkeypatch, capsys, testDB):
+    inputs = iter(['yes', 'yes', 'Ash', 'yes', 'zoology', 'yes', 'kanto university', 'n'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?)',
+                    ('Ash', 'Iamten10@', 'ash', 'ketchum', 'English'))
+    source.commit()
+
+    try:
+        inCollege.inProfile(cursor, source, 'Ash', "")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output
+
+# Must be able to enter up to 3 previous jobs for a profile
+def test_Experience(monkeypatch, capsys, testDB):
+    inputs = iter(['yes', 'yes', 'John', 'yes', 'aerospace engineering', 'yes', 'UF', 'yes',
+                   'I am currently seeking employment in the field of aerospace engineering', 'yes',
+                   iter(['Cashier', 'Dunkin Donuts', 'Orlando', '5/29/2016', '6/12/2018', 'I worked the register and occasionally ate donuts']), 'yes',
+                   iter(['Cashier', '7-11', 'Orlando', '7/11/2018', '7/11/2019', 'I worked the register and occasionally drank slushies']), 'yes',
+                   iter(['Engineering Intern', 'NASA', 'Ft. Lauderdale', '4/20/2020', '10/15/2020', 'I assisted on the development of rockets']), 'no'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, language) VALUES (?, ?, ?, ?, ?)',
+                    ('John', 'johN456*', 'john', 'smith', 'English'))
+    source.commit()
+
+    try:
+        inCollege.inProfile(cursor, source, 'John', "")
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output
