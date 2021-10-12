@@ -77,6 +77,20 @@ CREATE TABLE profiles
 
 """
 
+
+createFriendTable = """
+CREATE TABLE friends
+(
+    friendOne TEXT,
+    friendTwo TEXT,
+    status TEXT,
+    CONSTRAINT friendOne
+        FOREIGN KEY(friendOne) REFERENCES users(username),
+    CONSTRAINT friendTwo
+        FOREIGN KEY(friendTwo) REFERENCES users(username),
+    PRIMARY KEY(friendOne, friendTwo)
+);
+"""
 # =============================================================================
 # createOptionTable = """
 # 
@@ -96,6 +110,7 @@ cursor.execute(createTable)
 cursor.execute(createJobTable)
 cursor.execute(createProfileTable)
 cursor.execute(createProfileJobsTable)
+cursor.execute(createFriendTable)
 #cursor.execute(createOptionTable)
 source.commit()
 

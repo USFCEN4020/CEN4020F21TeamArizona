@@ -1,18 +1,20 @@
 #Antonio Gonzalez, U57195076
 #Kevin Girjanand, U68848880
 #Jesse Gonzales, U96407722
+#Gabriel Gusmao de Almeida
 
 import time as t
 import sqlite3 as sql
 import main
-from profile import ProfileJob
+from profile import ProfileJob, readProfile
 import profile
+from connection import Connection, getConnections
 
 #connects to the database file that was created
 sqlfile = "database.sqlite"
 source = sql.connect(sqlfile)
 cursor = source.cursor()
-
+friendNotificationCount = 0
 #Mini function that will capitalize all words in a string
 capitalizeWords = lambda words : " ".join([word.capitalize() for word in words.split()])
 
@@ -317,10 +319,18 @@ def LanguageSetup(cursor, source, username):
 # ====================================================================================================
 #Make an option to go into the profile function. 
 def Options(cursor, source, username):
+    global friendNotificationCount
+    if friendNotificationCount == 0:
+        cursor.execute("SELECT * FROM friends WHERE friendTwo == ? AND status == 'pending';", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        if len(items) > 0:
+            print("You have some pending friend requests! Go check them at out at View Friend Request!")
+        friendNotificationCount = 1
     print("Select Option")
     print("============================================================")
     UserOpt = input(
-        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links | Profile\n============================================================\n")
+        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links | Profile | Show My Network | View Friend Requests | Send a Friend Request\n============================================================\n")
 
     UserSelection(UserOpt.lower(), username)
 
@@ -328,7 +338,7 @@ def UserSelection(option, username):
     if option == "search for a job":
         SearchJob(cursor,source,username)
     elif option == "find someone":
-        FindPerson(cursor)
+        FindPerson1(cursor, username)
     elif option == "learn skill":
         SkillSelect(username)
     elif option == "useful links":
@@ -336,7 +346,13 @@ def UserSelection(option, username):
     elif option == "incollege links":
         InCollegeLink(cursor, source, username)
     elif option == "profile":
-        inProfile(cursor,source,username)
+        inProfile(cursor,source,username, "")
+    elif option == "send a friend request":
+        MakeFriend(cursor, source, username)
+    elif option == "view friend requests":
+        ViewFriendRequest(cursor, source, username)
+    elif option == "show my network":
+        ShowConnections(cursor,source, username)
     else:
         "Invalid Selection"
         Options(cursor, source, username)
@@ -402,9 +418,9 @@ def FindPerson1(cursor,username):
             print("Search again: 0")
             user = input()
             if user == "0":
-                FindPerson(cursor)
+                FindPerson1(cursor)
             else:
-                Options(username)
+                Options(cursor, source, username)
             
     #If they do not find a person they can search again or return to main menu   
     if(found == False):
@@ -412,18 +428,122 @@ def FindPerson1(cursor,username):
         print("Search again: 0")
         user = input()
         if user == "0":
-            FindPerson(cursor)
+            FindPerson1(cursor)
         else:
-            Options(username)
+            Options(cursor, source, username)
         
     print("")
-    
-#Search when not signed in 
+
+#View friends. Assumes that we want to display the friend's username
+def ShowConnections(cursor, source, username):
+    connections = getConnections(cursor,source,username)
+    hadResult = False
+    for connection in connections:
+        if connection.status != "pending":
+            hadResult = True
+            print(f"Connection's name: {connection.friend}")
+            connectionProfile = readProfile(cursor,connection.friend)
+            if connectionProfile:
+                print("This connection has a profile, would you like to look at it? 'yes' to view it")
+                choice = input()
+                if choice == 'yes':
+                    printProfile(connectionProfile)
+            print("Would you like to disconnect with this person? type 'disconnect' if you would like it.")
+            choice = input()
+            if choice == "disconnect":
+                exFriend = connection.friend
+                connection.disconnect()
+                print(f"You disconnected with {exFriend}")
+    if not hadResult:
+        print("No connections were found")
+    Options(cursor,source,username)
+            
+
+#send a friend request
+def MakeFriend(cursor, source, username):
+    last_name = input("Please enter a last name, 0 for none: ")
+    major = input("Please enter a major, 0 for none: ")
+    university = input("Please enter a university, 0 for none: ")
+
+    if last_name == '0' and major == '0' and university == '0':
+        choice = input("Invalid. Please enter at least one name, major or university. Would you like to search again? 0 for yes ")
+        if choice == '0':
+            MakeFriend(cursor, source, username)
+        else:
+            Options(cursor, source, username)
+    found = False
+    if major == '0' and university == '0':
+        cursor.execute("SELECT * FROM users")
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            if last_name == item[3]:
+                cursor.execute("SELECT * FROM friends WHERE (friendOne == ? AND friendTwo == ?) OR (friendOne == ? AND friendTwo == ?);", (username, item[0], item[0], username))
+                values = cursor.fetchall()
+                values = list(values)
+                if len(values) == 1:
+                    continue
+                if username != item[0]:
+                    decision = input(item[2] + ' ' + item[3] + ' is in the College System? Would you like to add this person? 0 for yes: ')
+                    if decision == '0':
+                        cursor.execute("INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, 'pending');", (username, item[0]))
+                        source.commit()
+                        print("Friend Request Sent")
+    else:
+        cursor.execute("SELECT * FROM users, profiles WHERE profiles.belongsTo == users.username;")
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            if (last_name == '0' or last_name == item[3]) and (major == '0' or major == item[10]) and (university == '0' or university == item[11]):
+              cursor.execute("SELECT * FROM friends WHERE (friendOne == ? AND friendTwo == ?) OR (friendOne == ? AND friendTwo == ?);",(username, item[0], item[0], username))
+              values = cursor.fetchall()
+              values = list(values)
+              if len(values) == 1:
+                continue
+              if username != item[0]:
+                decision = input(item[2] + ' ' + item[3] + ' is in the College System. Would you like to add this person? 0 for yes: ')
+                if decision == '0':
+                    cursor.execute("INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, 'pending');", (username, item[0]))
+                    source.commit()
+                    print("Friend Request Sent")
+    Options(cursor,source,username)
+
+#view any incoming friend requests or pending friend requests
+def ViewFriendRequest(cursor, source, username):
+    choice = input("View Incoming Friend Requests or Pending Requests Sent? 0 for incoming: ")
+    if choice == '0':
+        cursor.execute("SELECT * FROM friends WHERE friendTwo == ? AND status == 'pending';", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            option = input("Would you like to accept " + item[0] + "? 0 for accept: ")
+            if option == '0':
+                cursor.execute("UPDATE friends SET status='active' WHERE friendOne == ? AND friendTwo == ?;", (item[0], username))
+                source.commit()
+            else:
+                cursor.execute("DELETE FROM friends WHERE friendOne == ? AND friendTwo == ?;", (item[0], username ))
+                source.commit()
+    else:
+        cursor.execute("SELECT * FROM friends WHERE friendOne == ? AND status == 'pending'", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        print("Pending Requests Sent: ")
+        for item in items:
+            print(item[1])
+
+    decision = input("Would you like to return to the main menu? 0 for yes: ")
+    if decision == '0':
+        Options(cursor, source, username)
+    else:
+        ViewFriendRequest(cursor, source, username)
+
+
+#search when not signed in
 def FindPerson(cursor):
     first_Name = input("Please enter a first name: ")
     last_Name = input("Please enter a last name: ")
     found = False
-    
+
     cursor.execute("SELECT * FROM users")
     items = cursor.fetchall()
     items = list(items)
