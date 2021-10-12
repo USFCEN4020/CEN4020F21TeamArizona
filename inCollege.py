@@ -36,7 +36,7 @@ def logIn(cursor):
 def signUp(cursor,source):
     #first checks if the number of rows in Users is 5, if so, that's the maximum number of users
     cursor.execute("SELECT COUNT(*) FROM users")
-    if cursor.fetchone()[0] == 5:
+    if cursor.fetchone()[0] == 10:
         print("Unable to sign up. There is already the maximum number of users.")
         loggedIn = False
         username = " "
