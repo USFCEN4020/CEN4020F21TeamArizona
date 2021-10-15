@@ -713,21 +713,21 @@ def SkillSelect(username):
 def SelectedSkill(skill, username):
     if skill == "c++":
         print("under construction")
-        Options(username)
+        Options(cursor, source, username)
     elif skill == "java":
         print("under construction")
-        Options(username)
+        Options(cursor, source, username)
     elif skill == "python":
         print("under construction")
-        Options(username)
+        Options(cursor, source, username)
     elif skill == "sql":
         print("under construction")
-        Options(username)
+        Options(cursor, source, username)
     elif skill == "javascript":
         print("under construction")
-        Options(username)
+        Options(cursor, source, username)
     elif skill == "no selection":
-        Options(username)
+        Options(cursor, source, username)
     else:
         print("Invalid Selection")
-        Options(username)
+        Options(cursor, source, username)
