@@ -15,6 +15,7 @@ import sqlite3 as sql
 import pytest
 import os
 import profile
+import connection 
 # Creating a test database to not interfere with data from the primary one
 TEST_DB_FILENAME = "test_database.sqlite"
 
@@ -85,10 +86,25 @@ def testDB():
     );
     """
 
+    createFriendTable = """
+    CREATE TABLE IF NOT EXISTS friends
+    (
+        friendOne TEXT,
+        friendTwo TEXT,
+        status TEXT,
+        CONSTRAINT friendOne
+            FOREIGN KEY(friendOne) REFERENCES users(username),
+        CONSTRAINT friendTwo
+            FOREIGN KEY(friendTwo) REFERENCES users(username),
+        PRIMARY KEY(friendOne, friendTwo)
+    );
+    """
+
     cursor.execute(createTable)
     cursor.execute(createJobTable)
     cursor.execute(createProfileTable)
     cursor.execute(createProfileJobsTable)
+    cursor.execute(createFriendTable)
     source.commit()
     return cursor, source
 
@@ -669,3 +685,99 @@ def test_Experience(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
+
+# Test the new maximum number of student accounts that can be created
+def test_NewMaxAccounts(monkeypatch, capsys, testDB):
+    tests = [iter(['burt', 'Simpson12@', 'Burt', 'Simpson']), iter(['murge', 'Simpson13@', 'Murge', 'Simpson']),
+             iter(['humer', 'Simpson14@', 'Humer', 'Simpson']), iter(['muggie', 'Simpson15@', 'Muggie', 'Simpson']),
+             iter(['lusa', 'Simpson16@', 'Lusa', 'Simpson']), iter(['msburns', 'Simpson17@', 'Ms.', 'Burns']),
+             iter(['bob', 'Bobby123@', 'Bob', 'Ross']),
+             iter(['ash', 'Iamten10@', 'Ash', 'Ketchum']),
+             iter(['john', 'Noobmaster69@', 'John', 'Smith']), 
+             iter(['jane', 'Jane365@@', 'Jane', 'Doe']),
+             iter(['peter', 'Spiderman1@', 'Peter', 'Parker'])]
+    desiredOutput = "Unable to sign up. There is already the maximum number of users.\n"
+    cursor, source = testDB
+    for inputs in tests:
+        monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+        try:
+            inCollege.signUp(cursor, source)
+        except(StopIteration):
+            output = capsys.readouterr().out
+            assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE jobs;")
+    cursor.execute("DROP TABLE profiles;")
+
+# List of friends on inCollege will initially be empty
+def test_FriendsListEmpty(monkeypatch, capsys, testDB):
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('Homer1', 'Simpson11@', 'Homer', 'Simpson'))
+    conn = connection.getConnections(cursor, source, 'Homer1')
+    desiredOutput = len(conn)
+    assert desiredOutput == 0
+    cursor.execute("DROP TABLE users;")
+
+# User will have a list of friends on InCollege that they have connected with
+def test_FriendsOnInCollege(monkeypatch, capsys, testDB):
+    inputs = iter(['n',])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('Homer1', 'Simpson11@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                    ('homer', 'bart', 'friend'))
+    conn = connection.getConnections(cursor, source, 'homer')
+    desiredOutput = str(conn)
+    assert desiredOutput != 0
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE friends;")
+
+# User will be able to send a friend request by searching for a last name, university, or major
+def MakeFriend(monkeypatch, capsys, testDB):
+    desiredOutput = "Friend Request Sent"
+    inputs = iter(['Simpson', 'Su', 'Physics', '0'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                    ('homer', 'bart', 'pending'))
+    source.commit()
+
+    try:
+        inCollege.MakeFriend(cursor, source, 'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    cursor.execute("DROP TABLE friends;")
+    
+# User will be able to view incoming friend requests and accept them
+def AcceptFriendRequest(monkeypatch, capsys, testDB):
+    desiredOutput = "Friend Request Sent"
+    inputs = iter(['0', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    source.commit()
+
+    try:
+        inCollege.ViewFriendRequest(cursor, source, 'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    cursor.execute("DROP TABLE friends;")
