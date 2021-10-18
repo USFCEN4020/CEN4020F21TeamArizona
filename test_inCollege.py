@@ -735,15 +735,41 @@ def test_FriendsOnInCollege(monkeypatch, capsys, testDB):
     cursor.execute("DROP TABLE friends;")
 
 # User will be able to send a friend request by searching for a last name, university, or major
-def MakeFriend(monkeypatch, capsys, testDB):
-    desiredOutput = "Friend Request Sent"
-    inputs = iter(['Simpson', 'Su', 'Physics', '0'])
+def test_MakeFriend(monkeypatch, capsys, testDB):
+    desiredOutput = "Friend Request Sent\nSelect Option\n============================================================\n"
+    inputs = iter(['Simpson', '0', '0', '0'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
                     ('homer', 'Simpson12@', 'Homer', 'Simpson'))
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
                     ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    source.commit()
+
+    try:
+        inCollege.MakeFriend(cursor, source, 'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        print(output)
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    cursor.execute("DROP TABLE friends;")
+    
+# User will be able to view incoming friend requests and accept them
+def test_AcceptFriendRequest(monkeypatch, capsys, testDB):
+    desiredOutput = "Select Option\n============================================================\nSelect Option\n============================================================\n"
+    inputs = iter(['0', '0', '0'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
     cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
                     ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
     cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
@@ -751,18 +777,18 @@ def MakeFriend(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.MakeFriend(cursor, source, 'homer')
+        inCollege.ViewFriendRequest(cursor, source, 'homer')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
     cursor.execute("DROP TABLE users;")
     cursor.execute("DROP TABLE profiles;")
     cursor.execute("DROP TABLE friends;")
-    
-# User will be able to view incoming friend requests and accept them
-def AcceptFriendRequest(monkeypatch, capsys, testDB):
-    desiredOutput = "Friend Request Sent"
-    inputs = iter(['0', ])
+
+# User will be able to view incoming friend requests and reject them
+def test_RejectFriendRequest(monkeypatch, capsys, testDB):
+    desiredOutput = ""
+    inputs = iter(['0', '1', '0'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
@@ -770,11 +796,105 @@ def AcceptFriendRequest(monkeypatch, capsys, testDB):
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
                     ('bart', 'Simpson13@', 'Bart', 'Simpson'))
     cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
                     ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                    ('homer', 'bart', 'pending'))
     source.commit()
 
     try:
         inCollege.ViewFriendRequest(cursor, source, 'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    cursor.execute("DROP TABLE friends;")
+
+def test_DisplayProfileShowConnection(monkeypatch, capsys, testDB):
+    desiredOutput = "Connection's name: bart\nThis connection has a profile, would you like to look at it? 'yes' to view it\n\nProfile: \n-------------\nTitle: Engineer\nMajor: Physics\nUniversity: Su\nAbout: N/a\n\nExperience Section:\n-------------------------\n\nEducation Section:\n-------------------------\nSchool Name: Su\nDegree: Bs\nYears attedend: 4\nWould you like to disconnect with this person? type 'disconnect' if you would like it.\nSelect Option\n============================================================\n"
+    inputs = iter(['yes','no'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                    ('homer', 'bart', 'active'))
+    source.commit()
+
+    try:
+        inCollege.ShowConnections(cursor, source,'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    cursor.execute("DROP TABLE friends;")
+
+
+def test_DisconnectProfileShowConnection(monkeypatch, capsys, testDB):
+    desiredOutput = "Connection's name: bart\nThis connection has a profile, would you like to look at it? 'yes' to view it\nWould you like to disconnect with this person? type 'disconnect' if you would like it.\nYou disconnected with bart\nSelect Option\n============================================================\n"
+    inputs = iter(['no','disconnect'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                    ('homer', 'bart', 'active'))
+    source.commit()
+
+    try:
+        inCollege.ShowConnections(cursor, source,'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+    cursor.execute("DROP TABLE friends;")
+
+def test_EmptyFriendRequests(monkeypatch, capsys, testDB):
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
+    conn = connection.getConnections(cursor, source, 'Homer')
+    desiredOutput = "No connections were found\nSelect Option\n============================================================\n"
+    assert desiredOutput == "No connections were found\nSelect Option\n============================================================\n"
+    cursor.execute("DROP TABLE users;")
+    cursor.execute("DROP TABLE profiles;")
+
+def test_DisplayProfileShowConnection(monkeypatch, capsys, testDB):
+    desiredOutput = "Connection's name: homer\nThis connection has a profile, would you like to look at it? 'yes' to view it\n\nProfile: \n-------------\nTitle: Pilot\nMajor: Aviation\nUniversity: Ny\nAbout: N/a\n\nExperience Section:\n-------------------------\n\nEducation Section:\n-------------------------\nSchool Name: Ny\nDegree: Ms\nYears attedend: 3\nWould you like to disconnect with this person? type 'disconnect' if you would like it.\nSelect Option\n============================================================\n"
+    inputs = iter(['yes','no'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
+    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                    ('homer', 'bart', 'active'))
+    source.commit()
+    try:
+        inCollege.ShowConnections(cursor, source,'bart')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
