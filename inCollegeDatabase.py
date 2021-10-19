@@ -28,14 +28,36 @@ createJobTable = """
 
 CREATE TABLE jobs
 (
+    jobID INTEGER AUTO_INCREMENT,
+    poster TEXT,
     title TEXT,
     description TEXT,
     employer TEXT,
     location TEXT,
     salary INTEGER,
     first TEXT,
-    last TEXT
+    last TEXT,
+    PRIMARY KEY(jobID)
+    CONSTRAINT poster
+        FOREIGN KEY (poster) REFERENCES users(username)
 );
+"""
+
+createUserJobRelation = """
+    CREATE TABLE userJobRelation
+    (
+        username TEXT,
+        jobID INTEGER,
+        status TEXT,
+        graduation_date TEXT,
+        start_date TEXT,
+        reasoning TEXT,
+        CONSTRAINT username
+            FOREIGN KEY(username) REFERENCES users(username),
+        CONSTRAINT jobID
+            FOREIGN KEY(jobID) REFERENCES jobs(jobID),
+        PRIMARY KEY(username, jobID)
+    );
 """
 
 createProfileJobsTable = """
@@ -54,7 +76,7 @@ createProfileJobsTable = """
             FOREIGN KEY(fromUser) REFERENCES users(username)
             ON DELETE CASCADE
 
-    )
+    );
 
 """
 
@@ -111,6 +133,7 @@ cursor.execute(createJobTable)
 cursor.execute(createProfileTable)
 cursor.execute(createProfileJobsTable)
 cursor.execute(createFriendTable)
+cursor.execute(createUserJobRelation)
 #cursor.execute(createOptionTable)
 source.commit()
 

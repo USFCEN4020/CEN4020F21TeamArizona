@@ -372,7 +372,7 @@ def SearchJob(cursor,source,username):
                 userLast = item[3]
         
         cursor.execute("SELECT COUNT(*) FROM jobs")
-        if(cursor.fetchone()[0] == 5):
+        if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
             title = input("Enter a job title: ")
@@ -396,9 +396,120 @@ def SearchJob(cursor,source,username):
             else:
                 Options(cursor,source,username)
                 print("")
-    else:       
-        Options(cursor,source,username)
+    else:
+        decide = input("Would you like to view jobs instead? 0 for yes: ")
+        if decide == '0':
+            listJobs(cursor, source, username)
+        else:
+            Options(cursor,source,username)
 
+def listJobs(cursor, source, username):
+    choice = input("Would you like to see saved jobs (0), jobs you've applied for (1), jobs you have yet to apply for (2), or all jobs (3), anything else to return to menu: ")
+    if choice == '0':
+        cursor.execute("SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            if item[2] == 'saved':
+                option = input(item[8] + " is saved. Would you like to view more details (0), apply (1), view next listing (2), anything else to return to previous screen: ")
+                if option == '0':
+                    print("title: " + item[8])
+                    print("description: " + item[9])
+                    print("employer: " + item[10])
+                    print("location: " + item[11])
+                    print("salary: " + str(item[12]))
+                    decide = input("Would you like to apply to this job? 0 for yes: ")
+                    if decide == '0':
+                        applyForJob(cursor, source, username, item[1])
+                    else:
+                        listJobs(cursor, source, username)
+                elif option == '1':
+                    applyForJob(cursor, source, username, item[1])
+                elif option == '2':
+                    continue
+                else:
+                    listJobs(cursor, source, username)
+    elif choice == '1':
+        cursor.execute("SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            if item[2] == 'applied':
+                print("You've applied to " + item[8] + " with " + item[10] + " at " + item[11])
+    elif choice == '2':
+        cursor.execute("SELECT * FROM jobs WHERE jobID NOT IN (SELECT userJobRelation.jobID FROM userJobRelation, jobs AS J WHERE userJobRelation.jobID = J.jobID AND userJobRelation.status = 'applied' AND userJobRelation.username == ?);", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            if item[1] == username:
+                continue
+            option = input(item[2] + ": You have not applied yet for this position. Would you like to view more details (0) apply (1), or go to the next listing (2), anything else to return to previous screen: ")
+            if option == '0':
+                print("title: " + item[2])
+                print("description: " + item[3])
+                print("employer: " + item[4])
+                print("location: " + item[5])
+                print("salary: " + str(item[6]))
+                decide = input("Would you like to apply for this job? 0 for yes, 1 for next listing, anything else to return to previous screen: ")
+                if decide == '0':
+                    applyForJob(cursor, source, username, item[0])
+                elif decide == '1':
+                    continue
+                else:
+                    listJobs(cursor, source, username)
+            elif option == '1':
+                applyForJob(cursor, source, username, item[0])
+            elif option == '2':
+                continue
+            else:
+                listJobs(cursor, source, username)
+   # elif choice == '3:
+    else:
+        Options(cursor, source, username)
+    listJobs(cursor, source, username)
+
+def applyForJob(cursor, source, username, jobID):
+    cont = True
+    graduation = input("What is your graduation date? (mm/dd/yyyy): ")
+    while cont:
+        if graduation[2] != '/' or graduation[5] != '/' or len(graduation) != 10:
+            graduation = input("Invalid format. What is your graduation date? (mm/dd/yyyy): ")
+            continue
+        graduation = graduation.replace("/", "")
+        if (not graduation.isnumeric()) or len(graduation) != 8:
+            graduation = input("Invalid format. What is your graduation date? (mm/dd/yyyy): ")
+            continue
+        else:
+            break
+
+    start = input("What is your expected start date? (mm/dd/yyyy): ")
+    while cont:
+        if start[2] != '/' or start[5] != '/' or len(start) != 10:
+            start = input("Invalid format. What is your expected start date? (mm/dd/yyyy): ")
+            continue
+        start = start.replace("/", "")
+        if (not start.isnumeric()) or len(start) != 8:
+            start = input("Invalid format. What is your expected start date? (mm/dd/yyyy): ")
+            continue
+        else:
+            break
+    reason = input("In a paragraph, explain why you think you'd be a good fit for this job: ")
+
+    cursor.execute("SELECT * FROM userJobRelation WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;", (jobID, username))
+    items = cursor.fetchall()
+    items = list(items)
+    if len(items) != 0:
+        for item in items:
+            cursor.execute("UPDATE userJobRelation SET graduation_date = ? WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;", (graduation, jobID, username))
+            cursor.execute("UPDATE userJobRelation SET start_date = ? WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;", (start, jobID, username))
+            cursor.execute("UPDATE userJobRelation SET reasoning = ? WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",(reason, jobID, username))
+            cursor.execute("UPDATE userJobRelation SET status = 'applied' WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;", (jobID, username))
+            source.commit()
+    else:
+        cursor.execute("INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, 'applied', ?, ?, ?);", (username, jobID, graduation, start, reason))
+        source.commit()
+    print("Successfully applied!")
+    Options(cursor, source, username)
 
 #Search for person within the database and then ask user to join if person is found
 # if a person is not found print statement and return to main menu
