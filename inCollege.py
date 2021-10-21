@@ -5,11 +5,12 @@
 
 import time as t
 import sqlite3 as sql
+
 import main
 from profile import ProfileJob, readProfile
 import profile
 from connection import Connection, getConnections
-
+import jobs
 #connects to the database file that was created
 sqlfile = "database.sqlite"
 source = sql.connect(sqlfile)
@@ -375,6 +376,8 @@ def SearchJob(cursor,source,username):
         if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
+            
+            poster = username 
             title = input("Enter a job title: ")
             description = input("Enter a job description: ")
             employer = input("Enter name of employer: ")
@@ -383,9 +386,9 @@ def SearchJob(cursor,source,username):
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
-            INSERT INTO jobs (title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?);"""
+            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
 
-            cursor.execute(addJob,(title, description, employer, location, salary, userFirst, userLast))
+            cursor.execute(addJob,(poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
 
 
@@ -405,6 +408,7 @@ def SearchJob(cursor,source,username):
 
 def listJobs(cursor, source, username):
     choice = input("Would you like to see saved jobs (0), jobs you've applied for (1), jobs you have yet to apply for (2), or all jobs (3), anything else to return to menu: ")
+    #Display saved jobs
     if choice == '0':
         cursor.execute("SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;", (username, ))
         items = cursor.fetchall()
@@ -429,6 +433,7 @@ def listJobs(cursor, source, username):
                     continue
                 else:
                     listJobs(cursor, source, username)
+    #applied jobs
     elif choice == '1':
         cursor.execute("SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;", (username, ))
         items = cursor.fetchall()
@@ -436,6 +441,7 @@ def listJobs(cursor, source, username):
         for item in items:
             if item[2] == 'applied':
                 print("You've applied to " + item[8] + " with " + item[10] + " at " + item[11])
+    #Unapplied job
     elif choice == '2':
         cursor.execute("SELECT * FROM jobs WHERE jobID NOT IN (SELECT userJobRelation.jobID FROM userJobRelation, jobs AS J WHERE userJobRelation.jobID = J.jobID AND userJobRelation.status = 'applied' AND userJobRelation.username == ?);", (username, ))
         items = cursor.fetchall()
@@ -443,7 +449,7 @@ def listJobs(cursor, source, username):
         for item in items:
             if item[1] == username:
                 continue
-            option = input(item[2] + ": You have not applied yet for this position. Would you like to view more details (0) apply (1), or go to the next listing (2), anything else to return to previous screen: ")
+            option = input(item[2] + ": You have not applied yet for this position. Would you like to view more details (0) apply (1), or go to the next listing (2), save for later (3), anything else to return to previous screen: ")
             if option == '0':
                 print("title: " + item[2])
                 print("description: " + item[3])
@@ -461,9 +467,11 @@ def listJobs(cursor, source, username):
                 applyForJob(cursor, source, username, item[0])
             elif option == '2':
                 continue
+            elif option == '3':
+                jobs.SavedJob(cursor, source, username, item[0])
             else:
                 listJobs(cursor, source, username)
-   # elif choice == '3:
+   # elif choice == '3:  
     else:
         Options(cursor, source, username)
     listJobs(cursor, source, username)
