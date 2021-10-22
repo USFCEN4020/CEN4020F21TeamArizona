@@ -6,11 +6,13 @@
 import inCollege
 
 def CheckJob(cursor, source, username, jobID):
-    print(f"check job:'{jobID}'")
     cursor.execute(f"SELECT * FROM jobs WHERE jobID = '{jobID}'")
     job = cursor.fetchall()
-    if not jobID:
-        print("Job was deleted")
+    #print(jobID)
+    if not job:
+        print(f"Saved job '{jobID}' was deleted")
+        cursor.execute(f"DELETE FROM userJobRelation WHERE username = '{username}' AND jobID ='{jobID}' ")
+        source.commit()
     else:
         print("job good")
 
@@ -30,7 +32,7 @@ def DeleteJob(cursor, source, username, jobID):
 # can be displayed next time they log in  
 def SavedJob(cursor, source, username, jobID): 
     #print("Saved jobs here") 
-    print(jobID)
+    #print(jobID)
     #Query the database with user and job id for userJobRelation
     # (FK Username, FK Jobid, status, grad_date, start, reasoning) PK Username, JobID
     print("Would you like to save a job (1), Unsave the job (2)")

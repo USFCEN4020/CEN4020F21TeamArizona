@@ -330,10 +330,16 @@ def Options(cursor, source, username):
             print("You have some pending friend requests! Go check them at out at View Friend Request!")
         friendNotificationCount = 1
     print("Select Option")
-    print("============================================================")
+    print("=======================================================================================================================================================================")
     UserOpt = input(
-        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links | Profile | Show My Network | View Friend Requests | Send a Friend Request\n============================================================\n")
-
+        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links | Profile | Show My Network | View Friend Requests | Send a Friend Request\n=======================================================================================================================================================================\n")
+    #check to see if any jobs have been deleted
+    cursor.execute(f"SELECT * FROM userJobRelation WHERE username = '{username}' ")
+    saved = cursor.fetchall()
+    saved = list(saved)
+    for saved in saved:
+        #print(saved)
+        jobs.CheckJob(cursor, source, username, saved[1])
     UserSelection(UserOpt.lower(), username)
 
 def UserSelection(option, username):
@@ -405,6 +411,11 @@ def SearchJob(cursor,source,username):
         cursor.execute("SELECT * FROM jobs WHERE jobs.poster == ?;", (username, ))
         items = cursor.fetchall()
         items = list(items)
+        #if no jobs to delete go back a menu
+        if not items:
+            print("no jobs to delete\n")
+            SearchJob(cursor, source, username)
+
         for item in items:
             print("title: " + item[2])
         remove = input()
@@ -424,13 +435,20 @@ def listJobs(cursor, source, username):
     choice = input("Would you like to see saved jobs (0), jobs you've applied for (1), jobs you have yet to apply for (2), or all jobs (3), anything else to return to menu: ")
     #Display saved jobs
     if choice == '0':
+        #check to see if any jobs have been deleted
+        cursor.execute(f"SELECT * FROM userJobRelation WHERE username = '{username}' ")
+        saved = cursor.fetchall()
+        saved = list(saved)
+        for saved in saved:
+            #print(saved)
+            jobs.CheckJob(cursor, source, username, saved[1])
+
+        
         cursor.execute("SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;", (username, ))
         items = cursor.fetchall()
         items = list(items)
         for item in items:
             if item[2] == 'saved':
-                #check if job has been deleted
-                jobs.CheckJob(cursor, source, username, item[1])
                 option = input(item[8] + " is saved. Would you like to view more details (0), apply (1), view next listing (2), Unsave (3) anything else to return to previous screen: ")
                 if option == '0':
                     print("title: " + item[8])
