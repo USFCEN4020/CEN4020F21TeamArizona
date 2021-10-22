@@ -7,6 +7,7 @@ import time as t
 import sqlite3 as sql
 
 import main
+import random
 from profile import ProfileJob, readProfile
 import profile
 from connection import Connection, getConnections
@@ -359,7 +360,7 @@ def UserSelection(option, username):
         Options(cursor, source, username)
 
 def SearchJob(cursor,source,username):
-    post_job = input("Would you like to post a job?: ")
+    post_job = input("Would you like to post a job or delete a job? 'yes', 'remove': ")
     
     if(post_job == "yes"):
         print("Posting job now")
@@ -376,7 +377,7 @@ def SearchJob(cursor,source,username):
         if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
-            
+            jobID = random.randrange(100,200,1)
             poster = username 
             title = input("Enter a job title: ")
             description = input("Enter a job description: ")
@@ -386,9 +387,9 @@ def SearchJob(cursor,source,username):
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
-            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
+            INSERT INTO jobs (jobID, poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"""
 
-            cursor.execute(addJob,(poster, title, description, employer, location, salary, userFirst, userLast))
+            cursor.execute(addJob,(jobID, poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
 
 
@@ -399,6 +400,19 @@ def SearchJob(cursor,source,username):
             else:
                 Options(cursor,source,username)
                 print("")
+    elif(post_job == "remove"):
+        print("Which job would you like to remove?")
+        cursor.execute("SELECT * FROM jobs WHERE jobs.poster == ?;", (username, ))
+        items = cursor.fetchall()
+        items = list(items)
+        for item in items:
+            print("title: " + item[2])
+        remove = input()
+        cursor.execute(f"SELECT jobID FROM jobs WHERE jobs.poster == '{username}' AND title == '{remove}' ")
+        jobID = cursor.fetchall()
+        jobID = list(jobID)
+        jobs.DeleteJob(cursor, source, username, jobID[0])
+        SearchJob(cursor, source, username)
     else:
         decide = input("Would you like to view jobs instead? 0 for yes: ")
         if decide == '0':
@@ -415,20 +429,26 @@ def listJobs(cursor, source, username):
         items = list(items)
         for item in items:
             if item[2] == 'saved':
-                option = input(item[8] + " is saved. Would you like to view more details (0), apply (1), view next listing (2), anything else to return to previous screen: ")
+                #check if job has been deleted
+                jobs.CheckJob(cursor, source, username, item[1])
+                option = input(item[8] + " is saved. Would you like to view more details (0), apply (1), view next listing (2), Unsave (3) anything else to return to previous screen: ")
                 if option == '0':
                     print("title: " + item[8])
                     print("description: " + item[9])
                     print("employer: " + item[10])
                     print("location: " + item[11])
                     print("salary: " + str(item[12]))
-                    decide = input("Would you like to apply to this job? 0 for yes: ")
+                    decide = input("Would you like to apply to this job? Apply: 0, Unsave: 1")
                     if decide == '0':
                         applyForJob(cursor, source, username, item[1])
+                    elif decide == '1':
+                        jobs.SavedJob(cursor, source, username, item[0])
                     else:
                         listJobs(cursor, source, username)
                 elif option == '1':
                     applyForJob(cursor, source, username, item[1])
+                elif option == '3':
+                    jobs.SavedJob(cursor, source, username, item[1])
                 elif option == '2':
                     continue
                 else:
@@ -449,14 +469,14 @@ def listJobs(cursor, source, username):
         for item in items:
             if item[1] == username:
                 continue
-            option = input(item[2] + ": You have not applied yet for this position. Would you like to view more details (0) apply (1), or go to the next listing (2), save for later (3), anything else to return to previous screen: ")
+            option = input(item[2] + ": You have not applied yet for this position.\n Would you like to view more details (0) apply (1), or go to the next listing (2), save for later (3), anything else to return to previous screen: ")
             if option == '0':
                 print("title: " + item[2])
                 print("description: " + item[3])
                 print("employer: " + item[4])
                 print("location: " + item[5])
                 print("salary: " + str(item[6]))
-                decide = input("Would you like to apply for this job? 0 for yes, 1 for next listing, anything else to return to previous screen: ")
+                decide = input("Would you like to apply for this job? 0 for yes, 1 for next listing, 3 for save, anything else to return to previous screen: ")
                 if decide == '0':
                     applyForJob(cursor, source, username, item[0])
                 elif decide == '1':
