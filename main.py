@@ -8,7 +8,6 @@ cursor = source.cursor()
 
 #main Function
 def Main():
-
         inCollege.successStory()
         print("Would you like to sign in or sign up? 0 for sign in, and 1 for sign up: ")
         print("3 for information video | Search Person 4")

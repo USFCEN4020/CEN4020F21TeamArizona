@@ -12,10 +12,6 @@ from profile import ProfileJob, readProfile
 import profile
 from connection import Connection, getConnections
 import jobs
-#connects to the database file that was created
-sqlfile = "database.sqlite"
-source = sql.connect(sqlfile)
-cursor = source.cursor()
 friendNotificationCount = 0
 #Mini function that will capitalize all words in a string
 capitalizeWords = lambda words : " ".join([word.capitalize() for word in words.split()])
@@ -111,7 +107,7 @@ def signUp(cursor,source):
         loggedIn = True
     return loggedIn, username
 
-def PlayVideo():
+def PlayVideo(cursor,source):
     print("Video is now playing\n")
     #Waits 4 seconds so user can watch the video then present option to join or go to main menu
     t.sleep(4)
@@ -149,7 +145,7 @@ def UsefulLink(cursor):
     print("")
     
     
-def General(cursor):
+def General(cursor,source):
     print("Sign Up (1), Help Center (2), About(3), Press (4), Blog(5), Careers(6), and Developers (7)")
     link = input("Please enter a number to go to a link: ")
     
@@ -340,21 +336,21 @@ def Options(cursor, source, username):
     for saved in saved:
         #print(saved)
         jobs.CheckJob(cursor, source, username, saved[1])
-    UserSelection(UserOpt.lower(), username)
+    UserSelection(UserOpt.lower(), username,cursor,source)
 
-def UserSelection(option, username):
+def UserSelection(option, username,cursor,source):
     if option == "search for a job":
         SearchJob(cursor,source,username)
     elif option == "find someone":
-        FindPerson1(cursor, username)
+        FindPerson1(cursor, username,source)
     elif option == "learn skill":
-        SkillSelect(username)
+        SkillSelect(username,cursor,source)
     elif option == "useful links":
         UsefulLink(cursor)
     elif option == "incollege links":
         InCollegeLink(cursor, source, username)
     elif option == "profile":
-        inProfile(cursor,source,username, "")
+        inProfile(cursor,source,username)
     elif option == "send a friend request":
         MakeFriend(cursor, source, username)
     elif option == "view friend requests":
@@ -383,7 +379,6 @@ def SearchJob(cursor,source,username):
         if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
-            jobID = random.randrange(100,200,1)
             poster = username 
             title = input("Enter a job title: ")
             description = input("Enter a job description: ")
@@ -393,9 +388,9 @@ def SearchJob(cursor,source,username):
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
-            INSERT INTO jobs (jobID, poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
 
-            cursor.execute(addJob,(jobID, poster, title, description, employer, location, salary, userFirst, userLast))
+            cursor.execute(addJob,( poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
 
 
@@ -560,7 +555,7 @@ def applyForJob(cursor, source, username, jobID):
 #Search for person within the database and then ask user to join if person is found
 # if a person is not found print statement and return to main menu
 #search for when signed in
-def FindPerson1(cursor,username):
+def FindPerson1(cursor,username,source):
     first_Name = input("Please enter a first name: ")
     last_Name = input("Please enter a last name: ")
     found = False
@@ -575,7 +570,7 @@ def FindPerson1(cursor,username):
             print("Search again: 0")
             user = input()
             if user == "0":
-                FindPerson1(cursor)
+                FindPerson1(cursor,username,source)
             else:
                 Options(cursor, source, username)
             
@@ -585,7 +580,7 @@ def FindPerson1(cursor,username):
         print("Search again: 0")
         user = input()
         if user == "0":
-            FindPerson1(cursor)
+            FindPerson1(cursor,username,source)
         else:
             Options(cursor, source, username)
         
@@ -696,7 +691,7 @@ def ViewFriendRequest(cursor, source, username):
 
 
 #search when not signed in
-def FindPerson(cursor):
+def FindPerson(cursor,source):
     first_Name = input("Please enter a first name: ")
     last_Name = input("Please enter a last name: ")
     found = False
@@ -727,14 +722,14 @@ def FindPerson(cursor):
     print("")
 
 #Profile creation
-def inProfile(cursor,source,username, c):
+def inProfile(cursor,source,username):
     result = profile.readProfile(cursor,username)
     if not result:
         print("You don't have a profile, would you like to create one? Type 'yes' to create it")
         choice = input()
         if choice.lower() == "yes":
             newProfile = profile.Profile(username)
-            EditProfile(newProfile, c)
+            EditProfile(newProfile,cursor)
             profile.createProfile(cursor, source, newProfile)
         Options(cursor,source,username)
         #inform user they don't have a profile and offer options to create or go back
@@ -744,7 +739,7 @@ def inProfile(cursor,source,username, c):
         
         choice = input()
         if choice.lower() == "yes":
-            EditProfile(result, c)
+            EditProfile(result,cursor)
             profile.updateProfile(cursor, source, result)
         Options(cursor,source,username)
 
@@ -861,13 +856,13 @@ def printProfile(profile):
     #Handle the experience case
 
 # C++  Java Python SQL JavaScript
-def SkillSelect(username):
+def SkillSelect(username,cursor,source):
     print("______________________________________________________________\nC++ | Java | Python | SQL | JavaScript | No Selection\n______________________________________________________________")
     skill = input("Select a skill")
-    SelectedSkill(skill.lower(), username)
+    SelectedSkill(skill.lower(), username,cursor,source)
 
 
-def SelectedSkill(skill, username):
+def SelectedSkill(skill, username,cursor,source):
     if skill == "c++":
         print("under construction")
         Options(cursor, source, username)
