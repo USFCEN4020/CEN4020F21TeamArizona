@@ -12,6 +12,7 @@ import sqlite3 as sql
 import pytest
 import profile
 import connection 
+import jobs
 # Creating a test database to not interfere with data from the primary one
 
 @pytest.fixture
@@ -779,5 +780,33 @@ def test_DeleteJob(monkeypatch, testDB):
         inCollege.SearchJob(cursor,source,"tommorello")
     except(StopIteration):
         cursor.execute("SELECT * FROM jobs WHERE jobID = 0")
+        result = cursor.fetchall()
+        assert len(result) == 0
+
+def test_applyForJob(monkeypatch, capsys, testDB):
+    desiredOutput = "Successfully applied!\nSelect Option\n=======================================================================================================================================================================\n"
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+    cursor.execute('INSERT INTO jobs (jobID, poster, title) VALUES (?, ?, ?)',
+                    (0,'tommorello', 'Sound Engineer'))
+    inputs = iter(['07/01/2022', '08/01/2022', 'i need a job'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.applyForJob(cursor, source, "tommorello",0)
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_SaveJob(monkeypatch, capsys, testDB):
+    cursor, source = testDB
+    cursor.execute('INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, ?, ?, ?, ?)',
+                    ('tommorello',0,'saved','07/01/2022','08/01/2022', 'i need a job'))
+    inputs = iter(['1'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        jobs.SavedJob(cursor,source,"tommorello",1)
+    except(StopIteration):
+        cursor.execute("SELECT * FROM userJobRelation WHERE status = saved")
         result = cursor.fetchall()
         assert len(result) == 0
