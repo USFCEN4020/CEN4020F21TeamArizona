@@ -13,8 +13,6 @@ def CheckJob(cursor, source, username, jobID):
         print(f"Saved job '{jobID}' was deleted")
         cursor.execute(f"DELETE FROM userJobRelation WHERE username = '{username}' AND jobID ='{jobID}' ")
         source.commit()
-    else:
-        print("job good")
 
 def DeleteJob(cursor, source, username, jobID):
     #print("Delete jobs here")
