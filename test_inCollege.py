@@ -20,6 +20,7 @@ def testDB():
     source = sql.connect(":memory:")
     cursor = source.cursor()
     createTable = """
+
     CREATE TABLE users
     (
         username TEXT PRIMARY KEY,
@@ -29,11 +30,16 @@ def testDB():
         email TEXT,
         sms TEXT,
         ad TEXT,
-        language TEXT
+        language TEXT,
+        membershipType TEXT,
+        monthlyBill INTEGER
     );
 
     """
+
+
     createJobTable = """
+
     CREATE TABLE jobs
     (
         jobID INTEGER AUTO_INCREMENT,
@@ -50,6 +56,7 @@ def testDB():
             FOREIGN KEY (poster) REFERENCES users(username)
     );
     """
+
     createUserJobRelation = """
         CREATE TABLE userJobRelation
         (
@@ -66,6 +73,7 @@ def testDB():
             PRIMARY KEY(username, jobID)
         );
     """
+
     createProfileJobsTable = """
         
         CREATE TABLE profileJobs
@@ -85,7 +93,9 @@ def testDB():
         );
 
     """
+
     createProfileTable = """
+
     CREATE TABLE profiles
     (
         belongsTo TEXT,
@@ -102,6 +112,8 @@ def testDB():
     );
 
     """
+
+
     createFriendTable = """
     CREATE TABLE friends
     (
@@ -115,12 +127,32 @@ def testDB():
         PRIMARY KEY(friendOne, friendTwo)
     );
     """
+
+    createMessages = """
+    CREATE TABLE messages
+    (
+        mess_no INTEGER AUTO_INCREMENT,
+        message TEXT,
+        receiver TEXT,
+        sender TEXT, 
+        status TEXT,
+        is_Friend TEXT,
+        subject TEXT, 
+        CONSTRAINT reciever
+            FOREIGN KEY(receiver) REFERENCES users(username),
+        CONSTRAINT sender
+            FOREIGN KEY(sender) REFERENCES users(username),
+        PRIMARY KEY(mess_no, subject, receiver)
+
+    );
+    """
     cursor.execute(createTable)
     cursor.execute(createJobTable)
     cursor.execute(createProfileTable)
     cursor.execute(createProfileJobsTable)
     cursor.execute(createFriendTable)
     cursor.execute(createUserJobRelation)
+    cursor.execute(createMessages)
     source.commit()
     return cursor, source
 
@@ -153,7 +185,7 @@ def test_WeakPasswords(monkeypatch, capsys, testDB):
 
 # Asserting successful sign up when the password is strong enough
 def test_ValidSignUp(monkeypatch, capsys, testDB):
-    inputs = iter(['bart', 'Simpson12@', 'Bart', 'Simpson'])
+    inputs = iter(['bart', 'Simpson12@', 'Bart', 'Simpson','0'])
     desiredOutput = 'Logged in!\n'
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -193,20 +225,6 @@ def test_SuccessfullLogin(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-
-def test_MaxAccounts(monkeypatch, capsys, testDB):
-    tests = [iter(['bart', 'Simpson12@', 'Bart', 'Simpson']), iter(['marge', 'Simpson12@', 'Marge', 'Simpson']),
-             iter(['homer', 'Simpson12@', 'Homer', 'Simpson']), iter(['maggie', 'Simpson12@', 'Maggie', 'Simpson']),
-             iter(['lisa', 'Simpson12@', 'Lisa', 'Simpson']), iter(['mrburns', 'Simpson12@', 'Mr.', 'Burns'])]
-    desiredOutput = "Unable to sign up. There is already the maximum number of users.\n"
-    cursor, source = testDB
-    for inputs in tests:
-        monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
-        try:
-            inCollege.signUp(cursor, source)
-        except(StopIteration):
-            output = capsys.readouterr().out
-            assert output == desiredOutput
 
 # Asserting that 5 skills show up after logged in and skills option is selected
 def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
@@ -641,14 +659,14 @@ def test_Experience(monkeypatch, capsys, testDB):
 
 # Test the new maximum number of student accounts that can be created
 def test_NewMaxAccounts(monkeypatch, capsys, testDB):
-    tests = [iter(['burt', 'Simpson12@', 'Burt', 'Simpson']), iter(['murge', 'Simpson13@', 'Murge', 'Simpson']),
-             iter(['humer', 'Simpson14@', 'Humer', 'Simpson']), iter(['muggie', 'Simpson15@', 'Muggie', 'Simpson']),
-             iter(['lusa', 'Simpson16@', 'Lusa', 'Simpson']), iter(['msburns', 'Simpson17@', 'Ms.', 'Burns']),
-             iter(['bob', 'Bobby123@', 'Bob', 'Ross']),
-             iter(['ash', 'Iamten10@', 'Ash', 'Ketchum']),
-             iter(['john', 'Noobmaster6@', 'John', 'Smith']), 
-             iter(['jane', 'Jane365@@', 'Jane', 'Doe']),
-             iter(['peter', 'Spiderman1@', 'Peter', 'Parker'])]
+    tests = [iter(['burt', 'Simpson12@', 'Burt', 'Simpson','0']), iter(['murge', 'Simpson13@', 'Murge', 'Simpson','0']),
+             iter(['humer', 'Simpson14@', 'Humer', 'Simpson','0']), iter(['muggie', 'Simpson15@', 'Muggie', 'Simpson','0']),
+             iter(['lusa', 'Simpson16@', 'Lusa', 'Simpson','0']), iter(['msburns', 'Simpson17@', 'Ms.', 'Burns','0']),
+             iter(['bob', 'Bobby123@', 'Bob', 'Ross','0']),
+             iter(['ash', 'Iamten10@', 'Ash', 'Ketchum','0']),
+             iter(['john', 'Noobmaster6@', 'John', 'Smith','0']), 
+             iter(['jane', 'Jane365@@', 'Jane', 'Doe','0']),
+             iter(['peter', 'Spiderman1@', 'Peter', 'Parker','0'])]
     desiredOutput = "Unable to sign up. There is already the maximum number of users.\n"
     cursor, source = testDB
     for inputs in tests:

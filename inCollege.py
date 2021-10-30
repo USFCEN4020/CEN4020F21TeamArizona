@@ -14,10 +14,7 @@ import profile
 from connection import Connection, getConnections
 import jobs
 import message
-#connects to the database file that was created
-sqlfile = "database.sqlite"
-source = sql.connect(sqlfile)
-cursor = source.cursor()
+
 friendNotificationCount = 0
 #Mini function that will capitalize all words in a string
 capitalizeWords = lambda words : " ".join([word.capitalize() for word in words.split()])
@@ -367,21 +364,21 @@ def Options(cursor, source, username):
         #print(saved)
         jobs.CheckJob(cursor, source, username, saved[1])
 
-    UserSelection(UserOpt.lower(), username)
+    UserSelection(UserOpt.lower(), username,cursor,source)
 
-def UserSelection(option, username):
+def UserSelection(option, username,cursor,source):
     if option == "search for a job":
         SearchJob(cursor,source,username)
     elif option == "find someone":
         FindPerson1(cursor, username)
     elif option == "learn skill":
-        SkillSelect(username)
+        SkillSelect(username,cursor,source)
     elif option == "useful links":
         UsefulLink(cursor)
     elif option == "incollege links":
         InCollegeLink(cursor, source, username)
     elif option == "profile":
-        inProfile(cursor,source,username, "")
+        inProfile(cursor,source,username)
     elif option == "send a friend request":
         MakeFriend(cursor, source, username)
     elif option == "view friend requests":
@@ -761,14 +758,14 @@ def FindPerson(cursor,source):
     print("")
 
 #Profile creation
-def inProfile(cursor,source,username, c):
+def inProfile(cursor,source,username):
     result = profile.readProfile(cursor,username)
     if not result:
         print("You don't have a profile, would you like to create one? Type 'yes' to create it")
         choice = input()
         if choice.lower() == "yes":
             newProfile = profile.Profile(username)
-            EditProfile(newProfile, c)
+            EditProfile(newProfile,cursor)
             profile.createProfile(cursor, source, newProfile)
         Options(cursor,source,username)
         #inform user they don't have a profile and offer options to create or go back
