@@ -14,7 +14,10 @@ import profile
 from connection import Connection, getConnections
 import jobs
 import message
-
+#connects to the database file that was created
+sqlfile = "database.sqlite"
+source = sql.connect(sqlfile)
+cursor = source.cursor()
 friendNotificationCount = 0
 #Mini function that will capitalize all words in a string
 capitalizeWords = lambda words : " ".join([word.capitalize() for word in words.split()])
@@ -104,12 +107,15 @@ def signUp(cursor,source):
         if(acctSel == '0'):
             membershipType = "standard"
             monthlyBill = 0
+            print("You are now a standard member!\n")
         elif(acctSel == '1'):
             membershipType = "plus"
             monthlyBill += 10
+            print("You are now a plus member!\n")
         else:
             membershipType = input("Please enter 0 for standard or 1 for plus:")
         
+
         cont = True
 
         #adds inputs into the Users table, thus making a new row
@@ -364,21 +370,21 @@ def Options(cursor, source, username):
         #print(saved)
         jobs.CheckJob(cursor, source, username, saved[1])
 
-    UserSelection(UserOpt.lower(), username,cursor,source)
+    UserSelection(UserOpt.lower(), username)
 
-def UserSelection(option, username,cursor,source):
+def UserSelection(option, username):
     if option == "search for a job":
         SearchJob(cursor,source,username)
     elif option == "find someone":
         FindPerson1(cursor, username)
     elif option == "learn skill":
-        SkillSelect(username,cursor,source)
+        SkillSelect(username)
     elif option == "useful links":
         UsefulLink(cursor)
     elif option == "incollege links":
         InCollegeLink(cursor, source, username)
     elif option == "profile":
-        inProfile(cursor,source,username)
+        inProfile(cursor,source,username, "")
     elif option == "send a friend request":
         MakeFriend(cursor, source, username)
     elif option == "view friend requests":
@@ -409,6 +415,7 @@ def SearchJob(cursor,source,username):
         if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
+            jobID = random.randrange(100,200,1)
             poster = username 
             title = input("Enter a job title: ")
             description = input("Enter a job description: ")
@@ -418,9 +425,9 @@ def SearchJob(cursor,source,username):
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
-            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
+            INSERT INTO jobs (jobID, poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"""
 
-            cursor.execute(addJob,(poster, title, description, employer, location, salary, userFirst, userLast))
+            cursor.execute(addJob,(jobID, poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
 
 
@@ -618,29 +625,42 @@ def FindPerson1(cursor,username,source):
 
 #View friends. Assumes that we want to display the friend's username
 def ShowConnections(cursor, source, username):
-    connections = getConnections(cursor,source,username)
-    hadResult = False
-    for connection in connections:
-        if connection.status != "pending":
-            hadResult = True
-            print(f"Connection's name: {connection.friend}")
-            connectionProfile = readProfile(cursor,connection.friend)
-            if connectionProfile:
-                print("This connection has a profile, would you like to look at it? 'yes' to view it")
+    # Check if user has plus membership
+    cursor.execute("SELECT * FROM users")
+    names = cursor.fetchall()
+    names = list(names)
+    for name in names:
+        if(name[0] == username):
+            if(name[8] == "plus"):
+                print("Would you like to send a message? type 'message' ")
                 choice = input()
-                if choice == 'yes':
-                    printProfile(connectionProfile)
-            print("Would you like to disconnect with this person? type 'disconnect' if you would like it.")
-            print("Would you like to send a message? type 'message' ")
-            choice = input()
-            choice.lower()
-            if choice == "disconnect":
-                exFriend = connection.friend
-                connection.disconnect()
-                print(f"You disconnected with {exFriend}")
-            elif choice == "message":
-                message.SendMessage(cursor, source, username, connection.friend)
-
+                choice.lower()
+                if choice == "message":
+                    message.SendMessage(cursor, source, username, "")
+            elif(name[8] == "standard"):
+                connections = getConnections(cursor,source,username)
+                hadResult = False
+                for connection in connections:
+                    if connection.status != "pending":
+                        hadResult = True
+                        print(f"Connection's name: {connection.friend}")
+                        connectionProfile = readProfile(cursor,connection.friend)
+                        if connectionProfile:
+                            print("This connection has a profile, would you like to look at it? 'yes' to view it")
+                            choice = input()
+                            if choice == 'yes':
+                                printProfile(connectionProfile)
+                        print("Would you like to disconnect with this person? type 'disconnect' if you would like it.")
+                        print("Would you like to send a message? type 'message' ")
+                        choice = input()
+                        choice.lower()
+                        if choice == "disconnect":
+                            exFriend = connection.friend
+                            connection.disconnect()
+                            print(f"You disconnected with {exFriend}")
+                        elif choice == "message":
+                            message.SendMessage(cursor, source, username, connection.friend)
+    
     if not hadResult:
         print("No connections were found")
     Options(cursor,source,username)
@@ -757,14 +777,14 @@ def FindPerson(cursor,source):
     print("")
 
 #Profile creation
-def inProfile(cursor,source,username):
+def inProfile(cursor,source,username, c):
     result = profile.readProfile(cursor,username)
     if not result:
         print("You don't have a profile, would you like to create one? Type 'yes' to create it")
         choice = input()
         if choice.lower() == "yes":
             newProfile = profile.Profile(username)
-            EditProfile(newProfile,cursor)
+            EditProfile(newProfile, c)
             profile.createProfile(cursor, source, newProfile)
         Options(cursor,source,username)
         #inform user they don't have a profile and offer options to create or go back
