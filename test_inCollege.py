@@ -7,70 +7,86 @@
 # How to mock consecutive calls to input() with pytest - https://stackoverflow.com/questions/59986625/how-to-simulate-two-consecutive-console-inputs-with-pytest-monkeypatch
 # How to read stdout with pytest - https://docs.pytest.org/en/6.2.x/capture.html
 
-from sqlite3.dbapi2 import Cursor
-
-
 import inCollege
 import sqlite3 as sql
 import pytest
-import os
 import profile
 import connection 
+import jobs
 # Creating a test database to not interfere with data from the primary one
-TEST_DB_FILENAME = "test_database.sqlite"
 
 @pytest.fixture
 def testDB():
-    #os.system(f"python3 inCollegeDatabase.py {TEST_DB_FILENAME}")
-    source = sql.connect(TEST_DB_FILENAME)
+    source = sql.connect(":memory:")
     cursor = source.cursor()
-    
     createTable = """
-    CREATE TABLE IF NOT EXISTS users
+    CREATE TABLE users
     (
         username TEXT PRIMARY KEY,
         password TEXT,
         firstName TEXT,
         lastName TEXT,
         email TEXT,
-         sms TEXT,
-         ad TEXT,
+        sms TEXT,
+        ad TEXT,
         language TEXT
     );
-    """
 
+    """
     createJobTable = """
-    CREATE TABLE IF NOT EXISTS jobs
+    CREATE TABLE jobs
     (
+        jobID INTEGER AUTO_INCREMENT,
+        poster TEXT,
         title TEXT,
         description TEXT,
         employer TEXT,
         location TEXT,
         salary INTEGER,
         first TEXT,
-        last TEXT
+        last TEXT,
+        PRIMARY KEY(jobID)
+        CONSTRAINT poster
+            FOREIGN KEY (poster) REFERENCES users(username)
     );
     """
-
-    createProfileJobsTable = """
-    CREATE TABLE IF NOT EXISTS profileJobs
-    (
-        jobID INTEGER PRIMARY KEY,
-        fromUser TEXT,
-        title TEXT,
-        employer TEXT,
-        location TEXT,
-        dateStarted DATE,
-        dateEnded DATE,
-        description TEXT,
-        CONSTRAINT fromUser
-            FOREIGN KEY(fromUser) REFERENCES users(username)
-            ON DELETE CASCADE
-    )
+    createUserJobRelation = """
+        CREATE TABLE userJobRelation
+        (
+            username TEXT,
+            jobID INTEGER,
+            status TEXT,
+            graduation_date TEXT,
+            start_date TEXT,
+            reasoning TEXT,
+            CONSTRAINT username
+                FOREIGN KEY(username) REFERENCES users(username),
+            CONSTRAINT jobID
+                FOREIGN KEY(jobID) REFERENCES jobs(jobID),
+            PRIMARY KEY(username, jobID)
+        );
     """
+    createProfileJobsTable = """
+        
+        CREATE TABLE profileJobs
+        (
+            jobID INTEGER PRIMARY KEY,
+            fromUser TEXT,
+            title TEXT,
+            employer TEXT,
+            location TEXT,
+            dateStarted DATE,
+            dateEnded DATE,
+            description TEXT,
+            CONSTRAINT fromUser
+                FOREIGN KEY(fromUser) REFERENCES users(username)
+                ON DELETE CASCADE
 
+        );
+
+    """
     createProfileTable = """
-    CREATE TABLE IF NOT EXISTS profiles
+    CREATE TABLE profiles
     (
         belongsTo TEXT,
         title TEXT,
@@ -84,10 +100,10 @@ def testDB():
             ON DELETE CASCADE,
         PRIMARY KEY(belongsTo)
     );
-    """
 
+    """
     createFriendTable = """
-    CREATE TABLE IF NOT EXISTS friends
+    CREATE TABLE friends
     (
         friendOne TEXT,
         friendTwo TEXT,
@@ -99,12 +115,12 @@ def testDB():
         PRIMARY KEY(friendOne, friendTwo)
     );
     """
-
     cursor.execute(createTable)
     cursor.execute(createJobTable)
     cursor.execute(createProfileTable)
     cursor.execute(createProfileJobsTable)
     cursor.execute(createFriendTable)
+    cursor.execute(createUserJobRelation)
     source.commit()
     return cursor, source
 
@@ -120,11 +136,6 @@ def test_FailedLogIn(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    cursor.execute("DROP TABLE profiles;")
-    
-
 
 # Asserting that sign ups with weak passwords won't be allowed
 def test_WeakPasswords(monkeypatch, capsys, testDB):
@@ -139,9 +150,6 @@ def test_WeakPasswords(monkeypatch, capsys, testDB):
         except(StopIteration):
             output = capsys.readouterr().out
             assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-
 
 # Asserting successful sign up when the password is strong enough
 def test_ValidSignUp(monkeypatch, capsys, testDB):
@@ -154,9 +162,6 @@ def test_ValidSignUp(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    cursor.execute("DROP TABLE profiles;")
 
 # Asserting that sign ups where the username already exists will fail
 def test_UsernameExistsInSignUp(monkeypatch, capsys, testDB):
@@ -173,9 +178,6 @@ def test_UsernameExistsInSignUp(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    cursor.execute("DROP TABLE profiles;")
 
 # Asserting successful login when account is in database
 def test_SuccessfullLogin(monkeypatch, capsys, testDB):
@@ -191,10 +193,6 @@ def test_SuccessfullLogin(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    cursor.execute("DROP TABLE profiles")
-
 
 def test_MaxAccounts(monkeypatch, capsys, testDB):
     tests = [iter(['bart', 'Simpson12@', 'Bart', 'Simpson']), iter(['marge', 'Simpson12@', 'Marge', 'Simpson']),
@@ -209,14 +207,11 @@ def test_MaxAccounts(monkeypatch, capsys, testDB):
         except(StopIteration):
             output = capsys.readouterr().out
             assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    
 
 # Asserting that 5 skills show up after logged in and skills option is selected
 def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
     inputs = iter(["learn skill"])
-    desiredOutput = "Select Option\n============================================================\n______________________________________________________________\nC++ | Java | Python | SQL | JavaScript | No Selection\n______________________________________________________________\n"
+    desiredOutput = "Select Option\n=======================================================================================================================================================================\n______________________________________________________________\nC++ | Java | Python | SQL | JavaScript | No Selection\n______________________________________________________________\n"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
     try:
@@ -224,8 +219,6 @@ def test_SkillsAreDisplaying(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 # Assert that if a existing user is found when searched
 def test_SearchExistingUserWhileSignedIn(monkeypatch, capsys, testDB):
@@ -237,35 +230,32 @@ def test_SearchExistingUserWhileSignedIn(monkeypatch, capsys, testDB):
                    ('homer', 'Simpson12@', 'homer', 'simpson'))
     source.commit()
     try:
-        inCollege.FindPerson1(cursor, "")
+        inCollege.FindPerson1(cursor, "",source)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 # Assert that if a non existing user is not found when searched
 def test_SearchNonExistingUser(monkeypatch, capsys, testDB):
     inputs = iter(['Mr.', 'Burns'])
     desiredOutput = "They are not yet a part of the InCollege system\nSearch again: 0\n"
-    cursor, _ = testDB
+    cursor, source = testDB
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.FindPerson1(cursor, "")
+        inCollege.FindPerson1(cursor, "",source)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
-def test_video(monkeypatch, capsys):
+def test_video(monkeypatch, capsys,testDB):
     inputs = iter(['1', ])
     desiredOutput = "Video is now playing\n\nThanks to inCollege I was able to meet with fellow college students and establish connections\nthat allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege\nI was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft\n--Alyssa (Arizona)\nWould you like to sign in or sign up? 0 for sign in, and 1 for sign up: \n3 for information video | Search Person 4\n5 for Useful Links | 6 for InCollege Important Links\n"
+    cursor, source = testDB
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.PlayVideo()
+        inCollege.PlayVideo(cursor,source)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -286,12 +276,10 @@ def test_searchExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
     inputs = iter(['homer', 'simpson'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.FindPerson(cursor)
+        inCollege.FindPerson(cursor,source)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_searchNonExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
     desiredOutput = "They are not yet a part of the InCollege system\nSearch again: 0\n"
@@ -302,12 +290,10 @@ def test_searchNonExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
     inputs = iter(['homer', 'jackson'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.FindPerson(cursor)
+        inCollege.FindPerson(cursor,source)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_postingJob(monkeypatch, capsys, testDB):
     desiredOuput = 'Posting job now\nTo post another job, press 1:\n'
@@ -324,9 +310,6 @@ def test_postingJob(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOuput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-
 
 def test_InCollegeLink1(monkeypatch, capsys, testDB):
     desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nCopyright 2021 InCollege USA. All rights reserved.\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
@@ -339,10 +322,6 @@ def test_InCollegeLink1(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    cursor.execute("DROP TABLE profiles;")
-
 
 def test_InCollegeLink2(monkeypatch, capsys, testDB):
     desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nAn Encouraging online platform for College Students\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
@@ -355,8 +334,6 @@ def test_InCollegeLink2(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink3(monkeypatch, capsys, testDB):
@@ -369,8 +346,6 @@ def test_InCollegeLink3(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink4(monkeypatch, capsys, testDB):
@@ -383,8 +358,6 @@ def test_InCollegeLink4(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_EmailNotifChange(monkeypatch, capsys, testDB):
     desiredOutput = "InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). \nThis Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).\nPlease read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.\nWe reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.\nYou are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy\n by your continued use of the Application after the date such revised Privacy Policy is posted.\n\nInCollege email turned off"
@@ -399,8 +372,6 @@ def test_EmailNotifChange(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_SMSchange(monkeypatch, capsys, testDB):
     desiredOutput = "InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). \nThis Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).\nPlease read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.\nWe reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.\nYou are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy\n by your continued use of the Application after the date such revised Privacy Policy is posted.\n\nSMS turned on"
@@ -415,8 +386,6 @@ def test_SMSchange(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_AdChange(monkeypatch, capsys, testDB):
     desiredOutput = "InCollege (“we” or “us” or “our”) respects the privacy of our users (“user” or “you”). \nThis Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our mobile application (the “Application”).\nPlease read this Privacy Policy carefully. IF YOU DO NOT AGREE WITH THE TERMS OF THIS PRIVACY POLICY, PLEASE DO NOT ACCESS THE APPLICATION.\nWe reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of this Privacy Policy.\nYou are encouraged to periodically review this Privacy Policy to stay informed of updates. You will be deemed to have been made aware of, will be subject to, and will be deemed to have accepted the changes in any revised Privacy Policy\n by your continued use of the Application after the date such revised Privacy Policy is posted.\n\nTargeted advertising turned off"
@@ -431,8 +400,6 @@ def test_AdChange(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_InCollegeLink6(monkeypatch, capsys, testDB):
     desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nPerformance cookies: these types of cookies recognise and count the number of visitors to a website and users of an App and to see how users move around \nin each. This information is used to improve the way the website and App work.\nFunctionality cookies: these cookies recognise when you return to a website or App, enable personalised content and recognise and remember your preferences.\n\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
@@ -444,8 +411,6 @@ def test_InCollegeLink6(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink7(monkeypatch, capsys, testDB):
@@ -458,8 +423,6 @@ def test_InCollegeLink7(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink8(monkeypatch, capsys, testDB):
@@ -472,8 +435,6 @@ def test_InCollegeLink8(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 def test_InCollegeLink9(monkeypatch, capsys, testDB):
@@ -489,8 +450,6 @@ def test_InCollegeLink9(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 def test_InCollegeLink9WithSpanish(monkeypatch, capsys, testDB):
     desiredOutput = "Copyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\nEnglish\nCopyright Notice (1), About (2), Accessibility (3)\nUser Agreement (4), Privacy Policy (5), Cookie Policy (6)\nCopyright Policy (7), Brand Policy (8), Languages (9)\n"
@@ -505,8 +464,6 @@ def test_InCollegeLink9WithSpanish(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
 
 
 # Asserting successful after testing useful links
@@ -547,7 +504,6 @@ def test_ViewProfile(monkeypatch, capsys, testDB):
         output = capsys.readouterr().out
         assert output == desiredOutput
         
-    cursor.execute("DROP TABLE profiles;")
 
 #must be able to edit profile/ update profile
 def test_EditProfile(monkeypatch, capsys, testDB):
@@ -571,7 +527,6 @@ def test_EditProfile(monkeypatch, capsys, testDB):
         output = capsys.readouterr().out
         assert output == desiredOutput
         
-    cursor.execute("DROP TABLE profiles;")
 
 #must be able to partially put in profile information 
 def test_TryPartial(monkeypatch, capsys, testDB):
@@ -598,8 +553,6 @@ def test_TryPartial(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
     
 # Must be able to enter the necessary profile info
 def test_ProfileInfo(monkeypatch, capsys, testDB):
@@ -612,7 +565,7 @@ def test_ProfileInfo(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'homer', "")
+        inCollege.inProfile(cursor, source, 'homer')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -628,7 +581,7 @@ def test_AboutInfo(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'bart', "")
+        inCollege.inProfile(cursor, source, 'bart')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -645,7 +598,7 @@ def test_EducationInfo(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'Bob', "")
+        inCollege.inProfile(cursor, source, 'Bob')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -661,7 +614,7 @@ def test_NameConv(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'Ash', "")
+        inCollege.inProfile(cursor, source, 'Ash')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -681,7 +634,7 @@ def test_Experience(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'John', "")
+        inCollege.inProfile(cursor, source, 'John')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -693,7 +646,7 @@ def test_NewMaxAccounts(monkeypatch, capsys, testDB):
              iter(['lusa', 'Simpson16@', 'Lusa', 'Simpson']), iter(['msburns', 'Simpson17@', 'Ms.', 'Burns']),
              iter(['bob', 'Bobby123@', 'Bob', 'Ross']),
              iter(['ash', 'Iamten10@', 'Ash', 'Ketchum']),
-             iter(['john', 'Noobmaster69@', 'John', 'Smith']), 
+             iter(['john', 'Noobmaster6@', 'John', 'Smith']), 
              iter(['jane', 'Jane365@@', 'Jane', 'Doe']),
              iter(['peter', 'Spiderman1@', 'Peter', 'Parker'])]
     desiredOutput = "Unable to sign up. There is already the maximum number of users.\n"
@@ -705,9 +658,6 @@ def test_NewMaxAccounts(monkeypatch, capsys, testDB):
         except(StopIteration):
             output = capsys.readouterr().out
             assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE jobs;")
-    cursor.execute("DROP TABLE profiles;")
 
 # List of friends on inCollege will initially be empty
 def test_FriendsListEmpty(monkeypatch, capsys, testDB):
@@ -717,7 +667,6 @@ def test_FriendsListEmpty(monkeypatch, capsys, testDB):
     conn = connection.getConnections(cursor, source, 'Homer1')
     desiredOutput = len(conn)
     assert desiredOutput == 0
-    cursor.execute("DROP TABLE users;")
 
 # User will have a list of friends on InCollege that they have connected with
 def test_FriendsOnInCollege(monkeypatch, capsys, testDB):
@@ -731,12 +680,10 @@ def test_FriendsOnInCollege(monkeypatch, capsys, testDB):
     conn = connection.getConnections(cursor, source, 'homer')
     desiredOutput = str(conn)
     assert desiredOutput != 0
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE friends;")
 
 # User will be able to send a friend request by searching for a last name, university, or major
 def test_MakeFriend(monkeypatch, capsys, testDB):
-    desiredOutput = "Friend Request Sent\nSelect Option\n============================================================\n"
+    desiredOutput = "Friend Request Sent\nSelect Option\n=======================================================================================================================================================================\n"
     inputs = iter(['Simpson', '0', '0', '0'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -754,13 +701,10 @@ def test_MakeFriend(monkeypatch, capsys, testDB):
         output = capsys.readouterr().out
         print(output)
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-    cursor.execute("DROP TABLE friends;")
     
 # User will be able to view incoming friend requests and accept them
 def test_AcceptFriendRequest(monkeypatch, capsys, testDB):
-    desiredOutput = "Select Option\n============================================================\nSelect Option\n============================================================\n"
+    desiredOutput = "Select Option\n=======================================================================================================================================================================\nSelect Option\n=======================================================================================================================================================================\n"
     inputs = iter(['0', '0', '0'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     cursor, source = testDB
@@ -781,9 +725,6 @@ def test_AcceptFriendRequest(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-    cursor.execute("DROP TABLE friends;")
 
 # User will be able to view incoming friend requests and reject them
 def test_RejectFriendRequest(monkeypatch, capsys, testDB):
@@ -808,96 +749,64 @@ def test_RejectFriendRequest(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-    cursor.execute("DROP TABLE friends;")
 
-def test_DisplayProfileShowConnection(monkeypatch, capsys, testDB):
-    desiredOutput = "Connection's name: bart\nThis connection has a profile, would you like to look at it? 'yes' to view it\n\nProfile: \n-------------\nTitle: Engineer\nMajor: Physics\nUniversity: Su\nAbout: N/a\n\nExperience Section:\n-------------------------\n\nEducation Section:\n-------------------------\nSchool Name: Su\nDegree: Bs\nYears attedend: 4\nWould you like to disconnect with this person? type 'disconnect' if you would like it.\nSelect Option\n============================================================\n"
-    inputs = iter(['yes','no'])
-    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+
+def test_JobPostingMax(monkeypatch, capsys, testDB):
+    desiredOutput = "Unable to add job. There is already the maximum number of jobs posted.\n"
     cursor, source = testDB
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
-    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
-                    ('homer', 'bart', 'active'))
-    source.commit()
-
+    with capsys.disabled():
+        inputs = iter((["yes"] + ["soul power" for _ in range(5)] + ["1"]) * 10)
+        monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+        cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+        try:
+            inCollege.SearchJob(cursor,source,"tommorello")
+        except: pass
+    inputs = iter((["yes"] + ["soul power" for _ in range(5)] + ["1"]))
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.ShowConnections(cursor, source,'homer')
+            inCollege.SearchJob(cursor,source,"tommorello")
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-    cursor.execute("DROP TABLE friends;")
 
-
-def test_DisconnectProfileShowConnection(monkeypatch, capsys, testDB):
-    desiredOutput = "Connection's name: bart\nThis connection has a profile, would you like to look at it? 'yes' to view it\nWould you like to disconnect with this person? type 'disconnect' if you would like it.\nYou disconnected with bart\nSelect Option\n============================================================\n"
-    inputs = iter(['no','disconnect'])
+def test_DeleteJob(monkeypatch, testDB):
+    cursor, source = testDB
+    cursor.execute('INSERT INTO jobs (jobID, poster, title) VALUES (?, ?, ?)',
+                    (0,'tommorello', 'Sound Engineer'))
+    inputs = iter(['remove','Sound Engineer'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    try:
+        inCollege.SearchJob(cursor,source,"tommorello")
+    except(StopIteration):
+        cursor.execute("SELECT * FROM jobs WHERE jobID = 0")
+        result = cursor.fetchall()
+        assert len(result) == 0
+
+def test_applyForJob(monkeypatch, capsys, testDB):
+    desiredOutput = "Successfully applied!\nSelect Option\n=======================================================================================================================================================================\n"
     cursor, source = testDB
     cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
-    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
-                    ('homer', 'bart', 'active'))
-    source.commit()
-
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+    cursor.execute('INSERT INTO jobs (jobID, poster, title) VALUES (?, ?, ?)',
+                    (0,'tommorello', 'Sound Engineer'))
+    inputs = iter(['07/01/2022', '08/01/2022', 'i need a job'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.ShowConnections(cursor, source,'homer')
+        inCollege.applyForJob(cursor, source, "tommorello",0)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-    cursor.execute("DROP TABLE friends;")
 
-def test_EmptyFriendRequests(monkeypatch, capsys, testDB):
+def test_SaveJob(monkeypatch, capsys, testDB):
     cursor, source = testDB
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
-    conn = connection.getConnections(cursor, source, 'Homer')
-    desiredOutput = "No connections were found\nSelect Option\n============================================================\n"
-    assert desiredOutput == "No connections were found\nSelect Option\n============================================================\n"
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-
-def test_DisplayProfileShowConnection(monkeypatch, capsys, testDB):
-    desiredOutput = "Connection's name: homer\nThis connection has a profile, would you like to look at it? 'yes' to view it\n\nProfile: \n-------------\nTitle: Pilot\nMajor: Aviation\nUniversity: Ny\nAbout: N/a\n\nExperience Section:\n-------------------------\n\nEducation Section:\n-------------------------\nSchool Name: Ny\nDegree: Ms\nYears attedend: 3\nWould you like to disconnect with this person? type 'disconnect' if you would like it.\nSelect Option\n============================================================\n"
-    inputs = iter(['yes','no'])
+    cursor.execute('INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, ?, ?, ?, ?)',
+                    ('tommorello',0,'saved','07/01/2022','08/01/2022', 'i need a job'))
+    inputs = iter(['1'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
-    cursor, source = testDB
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('homer', 'Simpson12@', 'Homer', 'Simpson'))
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                    ('bart', 'Simpson13@', 'Bart', 'Simpson'))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('homer', 'Pilot', 'Aviation', 'Ny', 'N/a', 'Ms', 3))
-    cursor.execute('INSERT INTO profiles (belongsTo, title, major, university, about, degree, yearsAtUni) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                    ('bart', 'Engineer', 'Physics', 'Su', 'N/a', 'Bs', 4))
-    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
-                    ('homer', 'bart', 'active'))
-    source.commit()
     try:
-        inCollege.ShowConnections(cursor, source,'bart')
+        jobs.SavedJob(cursor,source,"tommorello",1)
     except(StopIteration):
-        output = capsys.readouterr().out
-        assert output == desiredOutput
-    cursor.execute("DROP TABLE users;")
-    cursor.execute("DROP TABLE profiles;")
-    cursor.execute("DROP TABLE friends;")
+        cursor.execute("SELECT * FROM userJobRelation WHERE status = saved")
+        result = cursor.fetchall()
+        assert len(result) == 0
