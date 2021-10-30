@@ -13,6 +13,7 @@ import pytest
 import profile
 import connection 
 import jobs
+from message import Messages
 # Creating a test database to not interfere with data from the primary one
 
 @pytest.fixture
@@ -828,3 +829,39 @@ def test_SaveJob(monkeypatch, capsys, testDB):
         cursor.execute("SELECT * FROM userJobRelation WHERE status = saved")
         result = cursor.fetchall()
         assert len(result) == 0
+
+def test_PlusMemberDatabaseInfo(monkeypatch,capsys,testDB):
+    cursor, source = testDB
+    inputs = iter(['slash','Guns&Roses1','slash','wat?','1'])
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    try:
+        inCollege.signUp(cursor,source)
+    except(StopIteration):
+        cursor.execute("SELECT membershipType, monthlyBill FROM users WHERE username = ?",("slash"))
+        membershipType, monthlyBill = cursor.fetchall()
+        assert membershipType == 1 and monthlyBill == 10
+
+def test_PlusMemberCanSeeUsers(monkeypatch, capsys,testDB):
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName,membershipType,monthlyBill) VALUES (?, ?, ?, ?,?,?)',
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello','plus','10'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                        ('slash', 'Guns&Roses1', 'Slash', 'wat?'))
+    inputs = iter(['send new message','message'])
+    desiredOutput = 'List of Students: \nFirst Name       Last Name\n----------       ---------\nTom      Morello\nSlash      wat?\n'
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    try:
+        Messages(cursor,source,'tommorello')
+    except(StopIteration):
+        output = capsys.readouterr().out[114:-42]
+        assert desiredOutput == output
+
+def test_PlusMemberCanMessageUsers(monkeypatch, capsys, testDB):
+    pass
+
+def test_RegMemberCanRespondToPlus(monkeypatch,capsys,testDB):
+    pass
+
+def test_RegMemberCanOnlyMessageFriends(monkeypatch, capsys, testDB):
+    pass
+    

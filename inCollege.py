@@ -14,10 +14,7 @@ import profile
 from connection import Connection, getConnections
 import jobs
 import message
-#connects to the database file that was created
-sqlfile = "database.sqlite"
-source = sql.connect(sqlfile)
-cursor = source.cursor()
+
 friendNotificationCount = 0
 #Mini function that will capitalize all words in a string
 capitalizeWords = lambda words : " ".join([word.capitalize() for word in words.split()])
@@ -370,15 +367,15 @@ def Options(cursor, source, username):
         #print(saved)
         jobs.CheckJob(cursor, source, username, saved[1])
 
-    UserSelection(UserOpt.lower(), username)
+    UserSelection(UserOpt.lower(), username,cursor,source)
 
-def UserSelection(option, username):
+def UserSelection(option, username,cursor,source):
     if option == "search for a job":
         SearchJob(cursor,source,username)
     elif option == "find someone":
         FindPerson1(cursor, username)
     elif option == "learn skill":
-        SkillSelect(username)
+        SkillSelect(username,cursor,source)
     elif option == "useful links":
         UsefulLink(cursor)
     elif option == "incollege links":
@@ -415,7 +412,6 @@ def SearchJob(cursor,source,username):
         if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
-            jobID = random.randrange(100,200,1)
             poster = username 
             title = input("Enter a job title: ")
             description = input("Enter a job description: ")
@@ -425,9 +421,9 @@ def SearchJob(cursor,source,username):
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
-            INSERT INTO jobs (jobID, poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
 
-            cursor.execute(addJob,(jobID, poster, title, description, employer, location, salary, userFirst, userLast))
+            cursor.execute(addJob,(poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
 
 
@@ -629,6 +625,7 @@ def ShowConnections(cursor, source, username):
     cursor.execute("SELECT * FROM users")
     names = cursor.fetchall()
     names = list(names)
+    hadResult = False
     for name in names:
         if(name[0] == username):
             if(name[8] == "plus"):
@@ -777,14 +774,14 @@ def FindPerson(cursor,source):
     print("")
 
 #Profile creation
-def inProfile(cursor,source,username, c):
+def inProfile(cursor,source,username):
     result = profile.readProfile(cursor,username)
     if not result:
         print("You don't have a profile, would you like to create one? Type 'yes' to create it")
         choice = input()
         if choice.lower() == "yes":
             newProfile = profile.Profile(username)
-            EditProfile(newProfile, c)
+            EditProfile(newProfile,cursor)
             profile.createProfile(cursor, source, newProfile)
         Options(cursor,source,username)
         #inform user they don't have a profile and offer options to create or go back
@@ -794,7 +791,7 @@ def inProfile(cursor,source,username, c):
         
         choice = input()
         if choice.lower() == "yes":
-            EditProfile(result, c)
+            EditProfile(result, cursor)
             profile.updateProfile(cursor, source, result)
         Options(cursor,source,username)
 
