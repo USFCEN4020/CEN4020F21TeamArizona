@@ -409,7 +409,6 @@ def SearchJob(cursor,source,username):
         if(cursor.fetchone()[0] == 10):
             print("Unable to add job. There is already the maximum number of jobs posted.")
         else:
-            jobID = random.randrange(100,200,1)
             poster = username 
             title = input("Enter a job title: ")
             description = input("Enter a job description: ")
@@ -419,9 +418,9 @@ def SearchJob(cursor,source,username):
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
-            INSERT INTO jobs (jobID, poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
 
-            cursor.execute(addJob,(jobID, poster, title, description, employer, location, salary, userFirst, userLast))
+            cursor.execute(addJob,(poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
 
 
