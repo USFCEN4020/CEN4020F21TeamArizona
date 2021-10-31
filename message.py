@@ -1,4 +1,3 @@
-
 # Messaging components of the inCollege program
 # Students should be able to send and recieve messages from people (friends)
 #  If students are not friends system will respond with a message "Im sorry, you are not friends with that person" -done
@@ -41,7 +40,8 @@ def CheckUnread(cursor, source, username):
 def CheckFriend(cursor, source, username, receiver):
     cursor.execute(f"SELECT * FROM friends WHERE (friendOne = '{username}' AND friendTwo = '{receiver}') OR (friendOne = '{receiver}' AND friendTwo = '{username}') ")
     status = cursor.fetchall()
-    
+    if len(status) == 0:
+        return False
     #for some reason makes list of lists
     status = list(status)
     #print(status[0][2])
@@ -81,9 +81,10 @@ def SendMessage(cursor, source, username, receiver):
                 print("What would you like to send")
                 message = input()
                 subject = input("Subject:")
-                cursor.execute(f"INSERT INTO messages (mess_no, message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?, ?);",
-                    (0, message, receiver, username, 'unread', 'active', subject))
+                cursor.execute(f"INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?);",
+                    (message, receiver, username, 'unread', 'active', subject))
                 source.commit()
+                print("Message sent!")
             elif(name[8] == "standard"):
                 #print(username, '->', receiver)
                 isFriend = CheckFriend(cursor, source, username, receiver)
@@ -92,9 +93,10 @@ def SendMessage(cursor, source, username, receiver):
                     print("What would you like to send")
                     message = input()
                     subject = input("Subject:")
-                    cursor.execute(f"INSERT INTO messages (mess_no, message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?, ?);",
-                        (0, message, receiver, username, 'unread', 'active', subject))
+                    cursor.execute(f"INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?);",
+                        (message, receiver, username, 'unread', 'active', subject))
                     source.commit()
+                    print("Message sent!")
                 else:
                     print("Im sorry, you are not friends with that person")
 
@@ -135,7 +137,7 @@ def ReadInbox(cursor,source,username,person):
     inCollege.Options(cursor,source,username)
 
 def ReadConversation(cursor,source,username,person):
-    print(f"Converstion with:{person}")
+    print(f"Conversation with:{person}")
     cursor.execute(f"Select * FROM messages WHERE (receiver = '{username}' AND sender = '{person}') OR (receiver = '{person}' AND sender = '{username}')")
     convo = cursor.fetchall()
     convo = list(convo)
@@ -150,6 +152,7 @@ def Reply(cursor,source,username,info):
     print("Reply")
     print("What would you like to send")
     message = input()
-    cursor.execute(f"INSERT INTO messages (mess_no, message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?, ?);",
-        (info[0]+1, message, info[3], username, 'unread', 'active', info[6]))
+    cursor.execute(f"INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?);",
+        (message, info[3], username, 'unread', 'active', info[6]))
+    print("Reply sent!")
     source.commit()

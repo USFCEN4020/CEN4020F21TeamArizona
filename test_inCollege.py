@@ -13,6 +13,7 @@ import pytest
 import profile
 import connection 
 import jobs
+import message
 from message import Messages
 # Creating a test database to not interfere with data from the primary one
 
@@ -830,6 +831,129 @@ def test_SaveJob(monkeypatch, capsys, testDB):
         result = cursor.fetchall()
         assert len(result) == 0
 
+def testSendMessageStandardTrue(monkeypatch, capsys, testDB):
+    desiredOutput = "Message sent!"
+    inputs = iter(['Sup', 'test'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, membershipType) VALUES (?, ?, ?, ?, ?)',
+                   ('homer', 'Simpson12@', 'Homer', 'Simpson', 'standard'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                   ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                   ('homer', 'bart', 'active'))
+    source.commit()
+    try:
+        message.SendMessage(cursor, source, 'homer', 'bart')
+    except(StopIteration):
+        output = capsys.readoutter()
+        assert output == desiredOutput
+
+def testSendMessageStandardFalse(monkeypatch, capsys, testDB):
+    desiredOutput = "I'm sorry, you are not friends with that person"
+    inputs = iter(['Sup', 'test'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, membershipType) VALUES (?, ?, ?, ?, ?)',
+                   ('homer', 'Simpson12@', 'Homer', 'Simpson', 'standard'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                   ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    source.commit()
+    try:
+        message.SendMessage(cursor, source, 'homer', 'bart')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_readUnread(monkeypatch, capsys, testDB):
+    inputs = iter(['0'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, membershipType) VALUES (?, ?, ?, ?, ?)',
+                   ('homer', 'Simpson12@', 'Homer', 'Simpson', 'standard'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                   ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                   ('homer', 'bart', 'active'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test', 'homer', 'bart', 'unread', 'active', 'testSubject'))
+    source.commit()
+    desiredOutput = "Here are your unread messages\nbart : test\nReply\nWhat would you like to send\n"
+    try:
+        message.ReadUnread(cursor, source, 'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_ReadInbox(monkeypatch, capsys, testDB):
+    inputs = iter(['12'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, membershipType) VALUES (?, ?, ?, ?, ?)',
+                   ('homer', 'Simpson12@', 'Homer', 'Simpson', 'standard'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                   ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                   ('homer', 'bart', 'active'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test', 'homer', 'bart', 'read', 'active', 'testSubject'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test2', 'homer', 'bart', 'read', 'active', 'testSubject2'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test3', 'homer', 'bart', 'unread', 'active', 'testSubject3'))
+    source.commit()
+    desiredOutput = "All messages from bart\n(None, 'test', 'homer', 'bart', 'read', 'active', 'testSubject')\n(None, 'test2', 'homer', 'bart', 'read', 'active', 'testSubject2')\n(None, 'test3', 'homer', 'bart', 'unread', 'active', 'testSubject3')\n-End-\nYou have unread messages\nSelect Option\n=======================================================================================================================================================================\nYou have unread messages\nSelect Option\n=======================================================================================================================================================================\n"
+    try:
+        message.ReadInbox(cursor, source, 'homer', 'bart')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_reply(monkeypatch, capsys, testDB):
+    inputs = iter(['0', 'test successful'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, membershipType) VALUES (?, ?, ?, ?, ?)',
+                   ('homer', 'Simpson12@', 'Homer', 'Simpson', 'standard'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                   ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                   ('homer', 'bart', 'active'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test', 'homer', 'bart', 'unread', 'active', 'testSubject'))
+    source.commit()
+    desiredOutput = "Here are your unread messages\nbart : test\nReply\nWhat would you like to send\nReply sent!\nYou have unread messages\nSelect Option\n=======================================================================================================================================================================\n"
+    try:
+        message.ReadUnread(cursor, source, 'homer')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_readConversation(monkeypatch, capsys, testDB):
+    inputs = iter(['12'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName, membershipType) VALUES (?, ?, ?, ?, ?)',
+                   ('homer', 'Simpson12@', 'Homer', 'Simpson', 'standard'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                   ('bart', 'Simpson13@', 'Bart', 'Simpson'))
+    cursor.execute('INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, ?)',
+                   ('homer', 'bart', 'active'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test', 'homer', 'bart', 'read', 'active', 'testSubject'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test2', 'bart', 'homer', 'read', 'active', 'testSubject2'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?)',
+                   ('test3', 'homer', 'bart', 'read', 'active', 'testSubject3'))
+    source.commit()
+    desiredOutput = "Conversation with:bart\ntest\ntest2\ntest3\n-End-\nSelect Option\n=======================================================================================================================================================================\nSelect Option\n=======================================================================================================================================================================\n"
+    try:
+        message.ReadConversation(cursor, source, 'homer', 'bart')
+    except:
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+
 def test_PlusMemberDatabaseInfo(monkeypatch,capsys,testDB):
     cursor, source = testDB
     inputs = iter(['slash','Guns&Roses1','slash','wat?','1'])
@@ -838,7 +962,10 @@ def test_PlusMemberDatabaseInfo(monkeypatch,capsys,testDB):
         inCollege.signUp(cursor,source)
     except(StopIteration):
         cursor.execute("SELECT membershipType, monthlyBill FROM users WHERE username = ?",("slash"))
-        membershipType, monthlyBill = cursor.fetchall()
+        test = cursor.fetchall()
+        test = list(test)
+        membershipType = test[0][1]
+        monthlyBill = test[0][2]
         assert membershipType == 1 and monthlyBill == 10
 
 def test_PlusMemberCanSeeUsers(monkeypatch, capsys,testDB):
@@ -856,12 +983,55 @@ def test_PlusMemberCanSeeUsers(monkeypatch, capsys,testDB):
         output = capsys.readouterr().out[114:-42]
         assert desiredOutput == output
 
+
 def test_PlusMemberCanMessageUsers(monkeypatch, capsys, testDB):
-    pass
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName,membershipType,monthlyBill) VALUES (?, ?, ?, ?,?,?)',
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello','plus','10'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                        ('slash', 'Guns&Roses1', 'Slash', 'wat?'))
+    inputs = iter(['send new message','message','slash','wat?','hello there','hi'])
+    desiredOutput = 'Message sent!'
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    try:
+        Messages(cursor,source,'tommorello')
+    except:
+        output = capsys.readouterr().out[290:-209]
+        assert output == desiredOutput
+
 
 def test_RegMemberCanRespondToPlus(monkeypatch,capsys,testDB):
-    pass
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                        ('grievous', 'Guns&Roses1', 'general', 'grievous'))
+    cursor.execute('INSERT INTO messages (message, receiver, sender, status, subject) VALUES (?,?,?,?,?)',
+                    ('hello there','grievous','obiwan','unread','hi'))
+    desiredOutput = "Reply sent!"
+    inputs = iter(['read unread','0','general kenobi'])
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    try:
+        Messages(cursor,source,'grievous')
+    except:
+        output = capsys.readouterr().out[149:-208]
+        assert output == desiredOutput
+
+    
+
 
 def test_RegMemberCanOnlyMessageFriends(monkeypatch, capsys, testDB):
-    pass
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName,membershipType,monthlyBill) VALUES (?, ?, ?, ?,?,?)',
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello','plus','10'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
+                        ('slash', 'Guns&Roses1', 'Slash', 'wat?'))
+    inputs = iter(['send new message','message'])
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    desiredOutput = "No connections were found"
+    try:
+        Messages(cursor,source,'slash')
+    except(StopIteration):
+        output = capsys.readouterr().out[64:89]
+        assert output == desiredOutput
+
+    
     
