@@ -1,0 +1,4 @@
+swe_env
+__pycache__
+.idea
+*.sqlite

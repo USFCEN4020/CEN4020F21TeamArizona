@@ -1,11 +1,6 @@
 import sqlite3 as sql
 import inCollege
 
-#connects to the database file that was created
-sqlfile = "database.sqlite"
-source = sql.connect(sqlfile)
-cursor = source.cursor()
-
 #main Function
 def Main():
 
@@ -39,4 +34,8 @@ def Main():
 
         source.close()
 if __name__ == "__main__":
+    #connects to the database file that was created
+    sqlfile = "database.sqlite"
+    source = sql.connect(sqlfile)
+    cursor = source.cursor()
     Main()
