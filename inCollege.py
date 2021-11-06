@@ -906,7 +906,19 @@ def printProfile(profile):
     print(f"Years attedend: {profile.yearsAtUni}")
 
     #Handle the experience case
-
+def profileMessage(cursor,username):
+    cursor.execute(f"SELECT count(belongsTo) FROM profiles WHERE belongsTo='{username}' ")  
+    result = cursor.fetchone()
+    if result[0] == 0: {
+        print("Dont forget to create a profile")
+    }
+  
+def waitingMessages(cursor,username):
+    cursor.execute(f"SELECT * FROM messages WHERE receiver = '{username}' ")  
+    result = cursor.fetchone()
+    if result[0] >= 1 and result[0] != username: {
+        print("You have messages waiting for you")
+    }
 # C++  Java Python SQL JavaScript
 def SkillSelect(username,cursor,source):
     print("______________________________________________________________\nC++ | Java | Python | SQL | JavaScript | No Selection\n______________________________________________________________")
