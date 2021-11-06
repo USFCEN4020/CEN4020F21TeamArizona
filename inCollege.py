@@ -6,7 +6,6 @@
 import time as t
 import sqlite3 as sql
 
-
 import main
 import random
 from profile import ProfileJob, readProfile
@@ -114,6 +113,12 @@ def signUp(cursor,source):
         
 
         cont = True
+
+        userNotification = firstName + " " + lastName + " has just joined in College"
+
+        addNotification = """
+        INSERT into notifications (username, notification) VALUES (?, ?);"""
+        cursor.execute(addNotification,(username, userNotification))
 
         #adds inputs into the Users table, thus making a new row
         #adds inputs into the Users table, thus making a new row
@@ -336,6 +341,17 @@ def LanguageSetup(cursor, source, username):
     elif language == "Spanish":
         print("Spanish")
 
+# Function will display any notifications the user may have
+def Notifications(cursor, source, username):
+    cursor.execute("SELECT * FROM notifications")
+    items = cursor.fetchall()
+    items = list(items)
+    for item in items:
+        if(not item[0] == username):
+            print(item[1])
+            oldNotification = item[1]
+            cursor.execute(f"DELETE FROM notifications WHERE notification = '{oldNotification}' ")
+            source.commit()
 
 # Functions After Logged In
 # ====================================================================================================
@@ -353,7 +369,10 @@ def Options(cursor, source, username):
     unread = message.CheckUnread(cursor,source,username)
     if unread == True:
         print("You have unread messages")
-    
+
+
+    #Check if user has any notifications
+    Notifications(cursor, source, username)
 
     print("Select Option")
     print("=======================================================================================================================================================================")
@@ -395,6 +414,15 @@ def UserSelection(option, username,cursor,source):
         Options(cursor, source, username)
 
 def SearchJob(cursor,source,username):
+    cursor.execute("SELECT * FROM jobs")
+    numJobs = 0
+    Jobs = cursor.fetchall()
+    Jobs = list(Jobs)
+    for Job in Jobs:
+        if(Job[2] == 'applied'):
+            numJobs += 1
+    
+    print("You have currently applied for " + str(numJobs) + " jobs")
     post_job = input("Would you like to post a job or delete a job? 'yes', 'remove': ")
     
     if(post_job == "yes"):
@@ -418,6 +446,11 @@ def SearchJob(cursor,source,username):
             employer = input("Enter name of employer: ")
             location = input("Enter a location: ")
             salary = input("Enter a salary: ")
+
+            userNotification = "A new job " + str(title) + " has been posted"
+            addNotification = """
+            INSERT into notifications (username, notification) VALUES (?, ?);"""
+            cursor.execute(addNotification,(username, userNotification))
             
             #adds inputs into the jobs table, thus making a new row
             addJob = """
@@ -425,7 +458,6 @@ def SearchJob(cursor,source,username):
 
             cursor.execute(addJob,(poster, title, description, employer, location, salary, userFirst, userLast))
             source.commit()
-
 
             print("To post another job, press 1:")
             user = input()
@@ -446,6 +478,12 @@ def SearchJob(cursor,source,username):
 
         for item in items:
             print("title: " + item[2])
+
+            userNotification = "A job that you had applied for has been deleted - " + str(item[2])
+            addNotification = """
+            INSERT into notifications (username, notification) VALUES (?, ?);"""
+            cursor.execute(addNotification,(username, userNotification))
+
         remove = input()
         cursor.execute(f"SELECT jobID FROM jobs WHERE jobs.poster == '{username}' AND title == '{remove}' ")
         jobID = cursor.fetchall()
@@ -469,6 +507,7 @@ def listJobs(cursor, source, username):
         saved = list(saved)
         for saved in saved:
             #print(saved)
+            print()
             jobs.CheckJob(cursor, source, username, saved[1])
 
         
@@ -906,19 +945,7 @@ def printProfile(profile):
     print(f"Years attedend: {profile.yearsAtUni}")
 
     #Handle the experience case
-def profileMessage(cursor,username):
-    cursor.execute(f"SELECT count(belongsTo) FROM profiles WHERE belongsTo='{username}' ")  
-    result = cursor.fetchone()
-    if result[0] == 0: {
-        print("Dont forget to create a profile")
-    }
-  
-def waitingMessages(cursor,username):
-    cursor.execute(f"SELECT * FROM messages WHERE receiver = '{username}' ")  
-    result = cursor.fetchone()
-    if result[0] >= 1 and result[0] != username: {
-        print("You have messages waiting for you")
-    }
+
 # C++  Java Python SQL JavaScript
 def SkillSelect(username,cursor,source):
     print("______________________________________________________________\nC++ | Java | Python | SQL | JavaScript | No Selection\n______________________________________________________________")
