@@ -148,6 +148,13 @@ def testDB():
 
     );
     """
+    createNotifications = """
+    CREATE TABLE notifications
+    (
+        username TEXT,
+        notification TEXT
+    );
+    """
     cursor.execute(createTable)
     cursor.execute(createJobTable)
     cursor.execute(createProfileTable)
@@ -155,6 +162,7 @@ def testDB():
     cursor.execute(createFriendTable)
     cursor.execute(createUserJobRelation)
     cursor.execute(createMessages)
+    cursor.execute(createNotifications)
     source.commit()
     return cursor, source
 
@@ -316,7 +324,7 @@ def test_searchNonExistingUserWhileLoggedOut(monkeypatch, capsys, testDB):
         assert output == desiredOutput
 
 def test_postingJob(monkeypatch, capsys, testDB):
-    desiredOuput = 'Posting job now\nTo post another job, press 1:\n'
+    desiredOuput = 'You have currently applied for 0 jobs\nPosting job now\nTo post another job, press 1:\n'
     inputs = iter(
         ['yes', 'Nuclear Safety Inspector', 'Inspect Saftety of Nuclear Power Plant (in Sector 7-G)', 'Mr. Burns',
          'Springfield', '37k'])
@@ -1015,23 +1023,78 @@ def test_RegMemberCanRespondToPlus(monkeypatch,capsys,testDB):
         output = capsys.readouterr().out[149:-208]
         assert output == desiredOutput
 
-    
-
-
-def test_RegMemberCanOnlyMessageFriends(monkeypatch, capsys, testDB):
+def test_NumberJobNotification(monkeypatch, capsys, testDB):
     cursor, source = testDB
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName,membershipType,monthlyBill) VALUES (?, ?, ?, ?,?,?)',
-                        ('tommorello', 'Morello12@', 'Tom', 'Morello','plus','10'))
-    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
-                        ('slash', 'Guns&Roses1', 'Slash', 'wat?'))
-    inputs = iter(['send new message','message'])
-    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
-    desiredOutput = "No connections were found"
+    inputs = iter(['no'])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                        ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+    cursor.execute('INSERT INTO jobs (jobID, poster, title) VALUES (?, ?, ?);',
+                    (0,'tommorello', 'Sound Engineer'))
+    cursor.execute('INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, ?, ?, ?, ?);',
+                    ('tommorello',0,'applied','07/01/2022','08/01/2022', 'i need a job'))
+    source.commit()
+    desiredOutput = 'You have currently applied for 1 jobs\n'
     try:
-        Messages(cursor,source,'slash')
+        inCollege.SearchJob(cursor, source, 'tommorello')
     except(StopIteration):
-        output = capsys.readouterr().out[64:89]
+        output = capsys.readouterr().out
         assert output == desiredOutput
 
-    
-    
+def test_NewJobNotification(monkeypatch, capsys, testDB):
+    cursor, source = testDB
+    inputs = iter(['22', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('poster', 'Morello12@', 'Post', 'Morello'))
+    cursor.execute('INSERT INTO jobs (jobID, poster, title) VALUES (?, ?, ?);',
+                   (0, 'poster', 'Sound Engineer'))
+    cursor.execute('INSERT INTO notifications (username, notification) VALUES (?, ?)',
+                   ('poster', 'A new job Sound Engineer has been posted'))
+    desiredOutput = 'A new job Sound Engineer has been posted\nSelect Option\n=======================================================================================================================================================================\nA new job Sound Engineer has been posted\nSelect Option\n=======================================================================================================================================================================\n'
+    try:
+        inCollege.Options(cursor, source, 'tommorello')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_DeletedJobNotification(monkeypatch, capsys, testDB):
+    cursor, source = testDB
+    inputs = iter(['22', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('poster', 'Morello12@', 'Post', 'Morello'))
+    cursor.execute('INSERT INTO jobs (jobID, poster, title) VALUES (?, ?, ?);',
+                   (0, 'poster', 'Sound Engineer'))
+    cursor.execute('INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, ?, ?, ?, ?);',
+                    ('tommorello',0,'applied','07/01/2022','08/01/2022', 'i need a job'))
+    cursor.execute('DELETE FROM jobs WHERE jobID == 0')
+    cursor.execute('INSERT INTO notifications (username, notification) VALUES (?, ?)',
+                   ('poster', 'A job that you had applied for has been deleted - Sound Engineer'))
+    desiredOutput = 'A job that you had applied for has been deleted - Sound Engineer\nSelect Option\n=======================================================================================================================================================================\nSaved job \'0\' was deleted\nA job that you had applied for has been deleted - Sound Engineer\nSelect Option\n=======================================================================================================================================================================\n'
+    try:
+        inCollege.Options(cursor, source, 'tommorello')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+def test_NewUserNotification(monkeypatch, capsys, testDB):
+    cursor, source = testDB
+    inputs = iter(['22', ])
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('tommorello', 'Morello12@', 'Tom', 'Morello'))
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('Newbie', 'Morello12@', 'Newbie', 'Morello'))
+    cursor.execute('INSERT INTO notifications (username, notification) VALUES (?, ?)',
+                   ('Newbie', 'Newbie Morello has just joined in College'))
+    desiredOutput = 'Newbie Morello has just joined in College\nSelect Option\n=======================================================================================================================================================================\nNewbie Morello has just joined in College\nSelect Option\n=======================================================================================================================================================================\n'
+    try:
+        inCollege.Options(cursor, source, 'tommorello')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput

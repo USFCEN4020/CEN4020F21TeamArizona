@@ -134,6 +134,15 @@ CREATE TABLE messages
 
 );
 """
+
+
+createNotifications = """
+CREATE TABLE notifications
+(
+    username TEXT,
+    notification TEXT
+);
+"""
 # =============================================================================
 # createOptionTable = """
 # 
@@ -156,6 +165,7 @@ cursor.execute(createProfileJobsTable)
 cursor.execute(createFriendTable)
 cursor.execute(createUserJobRelation)
 cursor.execute(createMessages)
+cursor.execute(createNotifications)
 #cursor.execute(createOptionTable)
 source.commit()
 

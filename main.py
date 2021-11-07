@@ -15,8 +15,11 @@ def Main():
         
         if option == "0":
             status, username = inCollege.logIn(cursor)
+            inCollege.profileMessage(cursor, username)
+            inCollege.waitingMessages(cursor, username)
         elif option == "1":
             status, username = inCollege.signUp(cursor,source)
+            print("Remember – you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!")
         elif option == "3":
             status = inCollege.PlayVideo()
         elif option == "4":
