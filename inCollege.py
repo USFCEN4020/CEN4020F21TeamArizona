@@ -366,6 +366,17 @@ def LanguageSetup(cursor, source, username):
     elif language == "Spanish":
         print("Spanish")
 
+# Function will display any notifications the user may have
+def Notifications(cursor, source, username):
+    cursor.execute("SELECT * FROM notifications")
+    items = cursor.fetchall()
+    items = list(items)
+    for item in items:
+        if(not item[0] == username):
+            print(item[1])
+            oldNotification = item[1]
+            cursor.execute(f"DELETE FROM notifications WHERE notification = '{oldNotification}' ")
+            source.commit()
 
 # Function will display any notifications the user may have
 def Notifications(cursor, source, username):
