@@ -1098,3 +1098,57 @@ def test_NewUserNotification(monkeypatch, capsys, testDB):
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
+
+
+
+#test remind jobs notification
+def test_RemindJobs(capsys,testDB,monkeypatch):
+    inputs = iter(['bart','Simpson12!'])
+    desiredOutput = "remember you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!\nLogged in!\nHomer Simpson has just joined inCollege\n"
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor,source = testDB
+    cursor.execute("INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);",
+                    ('bart', 'Simpson12!', 'bart', 'simpson'))
+    source.commit()
+    try:
+        inCollege.logIn(cursor)
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
+
+def test_Profile(capsys,testDB,monkeypatch):
+    inputs = iter(['bart'])
+    desiredOutput = 'Dont forget to create a profile\nLogged in!\n'
+    monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
+    cursor, source = testDB
+    cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);',
+                   ('bart', 'Simpson12@', 'bart', 'simpson'))
+    source.commit()
+    try:
+        inCollege.Notifications(cursor,source, '')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+    
+
+
+#test messages waiting
+def test_Messages(capsys,monkeypatch,testDB): 
+    inputs = iter(['bart'])
+    desiredOutput = 'Dont forget to create a profile\nLogged in!\nYou have unread messages'
+    monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
+    cursor,source = testDB
+    cursor.execute("INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?);",
+                    ('bart', 'Simpson12!', 'bart', 'simpson'))
+    cursor.execute("INSERT INTO users (username, password, firstName, LastName) VALUES (?, ?, ?, ?);",
+                    ('homer', 'HomerSimp1!', 'homer', 'simpson'))
+    cursor.execute("INSERT INTO messages (mess_no, message, receiver, sender, status, is_friend, subject) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    ('0', 'hello', 'bart', 'homer', 'unread', 'active', 'test'))
+    source.commit()
+    try:
+        inCollege.Notifications(cursor,source,'')
+    except(StopIteration):
+        output = capsys.readouterr().out
+        assert output == desiredOutput
+
