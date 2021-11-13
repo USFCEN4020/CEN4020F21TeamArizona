@@ -548,3 +548,49 @@ def SelectedSkill(skill, username, cursor, source):
     else:
         print("Invalid Selection")
         Options(cursor, source, username)
+
+def trainingProgram():
+    print("Please choose one of the options you would like")
+    print("0 for Training and Education | 1 for IT Help Desk  | 2 for Business Analysis and Strategy | 3 for Security ")
+    option = input()
+    if option == "0":
+        print("Please choose one of the options you would like")
+        print("0 for Interview Training, 1 for Resume Building, 2 for Professional Writing, 3 for Cracking Code interview")
+        trainingOption = input()
+        if trainingOption == "0":
+            print("Under Construction")
+        elif trainingOption == "1":
+            print("Under Construction")
+        elif trainingOption == "2":
+            print("Under Construction")
+        elif trainingOption == "3":
+            print("Under Construction")
+        main.Main()
+        print("")
+    elif option == "1":
+        print("Coming Soon!")
+        main.Main()
+        print("")
+    elif option == "2":
+        print("Please choose one of the options")
+        print(" 0 for How to use inCollege Learning, 1 for Train the trainer, 2 for Gamification of learning, 3 for else")
+        option2 = input()
+        if option2 == "0":
+            print("Please choose sign in from the menu and sign in to see the rest of the results ")
+            main.Main()
+            print("")
+        elif option2 == "1":
+            print("Please choose sign in from the menu and sign in to see the rest of the results")
+            main.Main()
+            print("")
+        elif option2 == "2":
+            print("Please choose sign in from the menu and sign in to see the rest of the results")
+            main.Main()
+            print("")
+        else:
+            print("Not seeing what you’re looking for? Sign in to see all 7,609 results.")
+            main.Main()
+            print("")
+    elif option == "3":
+        print("Coming Soon!")
+        main.Main()

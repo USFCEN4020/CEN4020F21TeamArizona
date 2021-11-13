@@ -8,11 +8,11 @@ def Main():
         inCollege.successStory()
         print("Would you like to sign in or sign up? 0 for sign in, and 1 for sign up: ")
         print("3 for information video | Search Person 4")
-        print("5 for Useful Links | 6 for InCollege Important Links")
+        print("5 for Useful Links | 6 for InCollege Important Links | 7 Training ")
         option = input()
 
-        while option != "1" and option != "0" and option != "3" and option != "4" and option != "5" and option != "6":
-            option = input("Incorrect input. 0 for sign in, 1 for sign up, 3 for more information, search 4, useful links 5, InCollege links 6: ")
+        while option != "1" and option != "0" and option != "3" and option != "4" and option != "5" and option != "6" and option != "7":
+            option = input("Incorrect input. 0 for sign in, 1 for sign up, 3 for more information, search 4, useful links 5, InCollege links 6, Training 7: ")
         
         if option == "0":
             status, username = inCollege.logIn(cursor)
@@ -29,6 +29,8 @@ def Main():
             status = inCollege.UsefulLink(cursor)
         elif option == "6":
             status = inCollege.InCollegeLink(cursor)
+        elif option == "7":
+            inCollege.trainingProgram()
 
 
         if status:
