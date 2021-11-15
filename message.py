@@ -7,6 +7,7 @@
 # Should generate friends list
 
 import inCollege
+import connection
 
 def Messages(cursor,source, username):
     print("Read unread | Read Conversation | Send New Message | Read Inbox")
@@ -19,7 +20,7 @@ def Messages(cursor,source, username):
         person = input()
         ReadConversation(cursor,source,username,person)
     elif choice.lower() == "send new message":
-        inCollege.ShowConnections(cursor,source,username)
+        connection.ShowConnections(cursor,source,username)
     elif choice.lower() == "read inbox":
         print("Recieved from who?")
         person = input()
@@ -156,3 +157,18 @@ def Reply(cursor,source,username,info):
         (message, info[3], username, 'unread', 'active', info[6]))
     print("Reply sent!")
     source.commit()
+
+    # Handle the experience case
+def profileMessage(cursor,username):
+    cursor.execute(f"SELECT count(belongsTo) FROM profiles WHERE belongsTo='{username}' ")  
+    result = cursor.fetchone()
+    if result[0] == 0: {
+        print("Dont forget to create a profile")
+    }
+
+def waitingMessages(cursor,username):
+    cursor.execute(f"SELECT * FROM messages WHERE receiver = '{username}' ")  
+    result = cursor.fetchone()
+    if result[0] >= 1 and result[0] != username: {
+        print("You have messages waiting for you")
+    }

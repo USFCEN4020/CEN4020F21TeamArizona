@@ -1,3 +1,6 @@
+import inCollege
+import profile
+
 # Utility Lambda:
 
 capitalizeWords = lambda words: " ".join([word.capitalize() for word in words.split()])
@@ -78,3 +81,138 @@ def updateProfile(cursor, connection, profile):
                 WHERE jobID={i} AND fromUser='{profile.username}'
             """
             cursor.execute(query)
+
+
+# Profile creation
+def inProfile(cursor, source, username):
+    result = profile.readProfile(cursor, username)
+    if not result:
+        print("You don't have a profile, would you like to create one? Type 'yes' to create it")
+        choice = input()
+        if choice.lower() == "yes":
+            newProfile = profile.Profile(username)
+            EditProfile(newProfile, cursor)
+            profile.createProfile(cursor, source, newProfile)
+        inCollege.Options(cursor, source, username)
+        # inform user they don't have a profile and offer options to create or go back
+    else:
+        printProfile(result)
+        print("Would you like to update your profile? type 'yes' to update it")
+
+        choice = input()
+        if choice.lower() == "yes":
+            EditProfile(result, cursor)
+            profile.updateProfile(cursor, source, result)
+        inCollege.Options(cursor, source, username)
+
+
+# Will get the desired changes to profile and return the profile object
+# added cursor so that test_inCollege can pass input to the questions
+def EditProfile(profile, cursor):
+    if profile.title:
+        message = f"The title of your profile is {profile.title}. Would you like to change it? 'yes' to change it"
+    else:
+        message = f"You don't have a title for your profile. Would you like to create it? 'yes' to create it"
+    print(message)
+    choice = input()
+    if choice == "yes":
+        profile.title = input("Enter the title ")
+    if profile.major:
+        message = f"The major of your profile is {profile.major}. Would you like to change it? 'yes' to change it"
+    else:
+        message = f"You don't have a major for your profile. Would you like to create it? 'yes' to create it"
+    print(message)
+    choice = input()
+    if choice == "yes":
+        profile.major = input("Enter the major ")
+    if profile.university:
+        message = f"The university of your profile is {profile.university}. Would you like to change it? 'yes' to change it"
+        print(message)
+    else:
+        message = f"You don't have a university for your profile. Would you like to create it? 'yes' to create it"
+    print(message)
+    choice = input()
+    if choice == "yes":
+        profile.university = input("Enter the university ")
+    if profile.about:
+        message = f"The about of your profile is {profile.about}. Would you like to change it? 'yes' to change it"
+    else:
+        message = f"You don't have about for your profile. Would you like to create it? 'yes' to create it"
+    print(message)
+    choice = input()
+    if choice == "yes":
+        profile.about = input("Enter the about ")
+    print("Experience Section:")
+    for i, job in enumerate(profile.experience):
+        printProfileJob(job, i)
+        print("Would you like to edit this job? 'yes' to edit")
+        choice = input()
+        if choice == "yes":
+            editProfileJob(profile.experience[i])
+    if len(profile.experience) < 3:
+        print("Would you like to add another job? 'yes' to add it")
+        choice = input()
+        if choice == 'yes':
+            newJob = ProfileJob()
+            editProfileJob(newJob)
+            profile.experience.append(newJob)
+    print("Education Section: ")
+    if profile.degree:
+        message = f"The degree of your profile is {profile.degree}. Would you like to change it? 'yes' to change it"
+    else:
+        message = f"You don't information about your degree. Would you like to add it? 'yes' to add it"
+    print(message)
+    choice = input()
+    if choice == "yes":
+        profile.about = input("Enter the degree ")
+    if profile.yearsAtUni:
+        message = f"The years attended of your profile is {profile.yearsAtUni}. Would you like to change it? 'yes' to change it"
+    else:
+        message = f"You don't have specified how many years you attended your university. Would you like to create it? Type 'yes' to create it"
+    print(message)
+    choice = input()
+    if choice == "yes":
+        profile.about = input("Enter the years attended ")
+
+
+def editProfileJob(job):
+    attrs = job.__dict__
+    for key in attrs:
+        if attrs[key]:
+            message = f"The {key} of this job is {attrs[key]}. Would you like to change it? 'yes' to change it"
+        else:
+            message = f"This job doesn't have a {key}. Would you like to create it? Type 'yes' to create it"
+        print(message)
+        choice = input()
+        if choice == "yes":
+            profile.about = input(f"Enter the {key}")
+        elif choice == "no":
+            pass
+        else:
+            print("invalid input")
+
+
+def printProfileJob(job, index):
+    print(f"Job {index + 1}:")
+    print("-------")
+    attrs = job.__dict__
+    for key in attrs:
+        print(f"{key}: {attrs[key]}")
+
+
+def printProfile(profile):
+    print("\nProfile: ")
+    print("-------------")
+    print(f"Title: {profile.title}")
+    print(f"Major: {profile.major}")
+    print(f"University: {profile.university}")
+    print(f"About: {profile.about}")
+    print(f"\nExperience Section:")
+    print("-------------------------")
+    for i, job in enumerate(profile.experience):
+        printProfileJob(job, i)
+    print("\nEducation Section:")
+    print("-------------------------")
+    print(f"School Name: {profile.university}")
+    print(f"Degree: {profile.degree}")
+    print(f"Years attedend: {profile.yearsAtUni}")

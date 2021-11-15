@@ -4,15 +4,13 @@
 # Gabriel Gusmao de Almeida
 
 import time as t
-import sqlite3 as sql
 
 import main
-import random
-from profile import ProfileJob, readProfile
 import profile
-from connection import Connection, getConnections
+import connection
 import jobs
 import message
+import learning
 
 friendNotificationCount = 0
 # Mini function that will capitalize all words in a string
@@ -367,7 +365,7 @@ def LanguageSetup(cursor, source, username):
         print("Spanish")
 
 # Function will display any notifications the user may have
-def Notifications(cursor, source, username):
+""" def Notifications(cursor, source, username):
     cursor.execute("SELECT * FROM notifications")
     items = cursor.fetchall()
     items = list(items)
@@ -376,7 +374,7 @@ def Notifications(cursor, source, username):
             print(item[1])
             oldNotification = item[1]
             cursor.execute(f"DELETE FROM notifications WHERE notification = '{oldNotification}' ")
-            source.commit()
+            source.commit() """
 
 # Function will display any notifications the user may have
 def Notifications(cursor, source, username):
@@ -416,7 +414,7 @@ def Options(cursor, source, username):
     print(
         "=======================================================================================================================================================================")
     UserOpt = input(
-        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links | Profile | Show My Network | View Friend Requests | Send a Friend Request | Messages\n=======================================================================================================================================================================\n")
+        "Search for a Job | Find Someone | Learn Skill | Useful Links | InCollege Links | Profile | Show My Network | View Friend Requests | Send a Friend Request | Messages | inCollege Learning\n=======================================================================================================================================================================\n")
     # check to see if any jobs have been deleted
     cursor.execute(f"SELECT * FROM userJobRelation WHERE username = '{username}' ")
     saved = cursor.fetchall()
@@ -426,11 +424,12 @@ def Options(cursor, source, username):
         jobs.CheckJob(cursor, source, username, saved[1])
 
     UserSelection(UserOpt.lower(), username, cursor, source)
+    Options(cursor,source,username)
 
 
 def UserSelection(option, username, cursor, source):
     if option == "search for a job":
-        SearchJob(cursor, source, username)
+        jobs.SearchJob(cursor, source, username)
     elif option == "find someone":
         FindPerson1(cursor, username)
     elif option == "learn skill":
@@ -440,252 +439,20 @@ def UserSelection(option, username, cursor, source):
     elif option == "incollege links":
         InCollegeLink(cursor, source, username)
     elif option == "profile":
-        inProfile(cursor, source, username, "")
+        profile.inProfile(cursor, source, username, "")
     elif option == "send a friend request":
-        MakeFriend(cursor, source, username)
+        connection.MakeFriend(cursor, source, username)
     elif option == "view friend requests":
-        ViewFriendRequest(cursor, source, username)
+        connection.ViewFriendRequest(cursor, source, username)
     elif option == "show my network":
-        ShowConnections(cursor, source, username)
+        connection.ShowConnections(cursor, source, username)
     elif option == "messages":
         message.Messages(cursor, source, username)
+    elif option == "incollege learning":
+        learning.Learning(cursor,source,username)
     else:
         "Invalid Selection"
         Options(cursor, source, username)
-
-
-def SearchJob(cursor, source, username):
-    cursor.execute("SELECT * FROM userJobRelation")
-    numJobs = 0
-    Jobs = cursor.fetchall()
-    Jobs = list(Jobs)
-    for Job in Jobs:
-        if (Job[2] == 'applied'):
-            numJobs = numJobs + 1
-
-    print("You have currently applied for " + str(numJobs) + " jobs")
-    post_job = input("Would you like to post a job or delete a job? 'yes', 'remove': ")
-
-    if (post_job == "yes"):
-        print("Posting job now")
-
-        cursor.execute("SELECT * FROM users")
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            if (item[0] == username):
-                userFirst = item[2]
-                userLast = item[3]
-
-        cursor.execute("SELECT COUNT(*) FROM jobs")
-        if (cursor.fetchone()[0] == 10):
-            print("Unable to add job. There is already the maximum number of jobs posted.")
-        else:
-            poster = username
-            title = input("Enter a job title: ")
-            description = input("Enter a job description: ")
-            employer = input("Enter name of employer: ")
-            location = input("Enter a location: ")
-            salary = input("Enter a salary: ")
-
-            userNotification = "A new job " + str(title) + " has been posted"
-            addNotification = """
-            INSERT into notifications (username, notification) VALUES (?, ?);"""
-            cursor.execute(addNotification, (username, userNotification))
-
-            # adds inputs into the jobs table, thus making a new row
-            addJob = """
-            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
-
-            cursor.execute(addJob, (poster, title, description, employer, location, salary, userFirst, userLast))
-            source.commit()
-
-            print("To post another job, press 1:")
-            user = input()
-            if user == "1":
-                SearchJob(cursor, source, username)
-            else:
-                Options(cursor, source, username)
-                print("")
-    elif (post_job == "remove"):
-        print("Which job would you like to remove?")
-        cursor.execute("SELECT * FROM jobs WHERE jobs.poster == ?;", (username,))
-        items = cursor.fetchall()
-        items = list(items)
-        # if no jobs to delete go back a menu
-        if not items:
-            print("no jobs to delete\n")
-            SearchJob(cursor, source, username)
-
-        for item in items:
-            print("title: " + item[2])
-
-            userNotification = "A job that you had applied for has been deleted - " + str(item[2])
-            addNotification = """
-            INSERT into notifications (username, notification) VALUES (?, ?);"""
-            cursor.execute(addNotification, (username, userNotification))
-
-        remove = input()
-        cursor.execute(f"SELECT jobID FROM jobs WHERE jobs.poster == '{username}' AND title == '{remove}' ")
-        jobID = cursor.fetchall()
-        jobID = list(jobID)
-        jobs.DeleteJob(cursor, source, username, jobID[0])
-        SearchJob(cursor, source, username)
-    else:
-        decide = input("Would you like to view jobs instead? 0 for yes: ")
-        if decide == '0':
-            listJobs(cursor, source, username)
-        else:
-            Options(cursor, source, username)
-
-
-def listJobs(cursor, source, username):
-    choice = input(
-        "Would you like to see saved jobs (0), jobs you've applied for (1), jobs you have yet to apply for (2), or all jobs (3), anything else to return to menu: ")
-    # Display saved jobs
-    if choice == '0':
-        # check to see if any jobs have been deleted
-        cursor.execute(f"SELECT * FROM userJobRelation WHERE username = '{username}' ")
-        saved = cursor.fetchall()
-        saved = list(saved)
-        for saved in saved:
-            # print(saved)
-            print()
-            jobs.CheckJob(cursor, source, username, saved[1])
-
-        cursor.execute(
-            "SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;",
-            (username,))
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            if item[2] == 'saved':
-                option = input(item[
-                                   8] + " is saved. Would you like to view more details (0), apply (1), view next listing (2), Unsave (3) anything else to return to previous screen: ")
-                if option == '0':
-                    print("title: " + item[8])
-                    print("description: " + item[9])
-                    print("employer: " + item[10])
-                    print("location: " + item[11])
-                    print("salary: " + str(item[12]))
-                    decide = input("Would you like to apply to this job? Apply: 0, Unsave: 1")
-                    if decide == '0':
-                        applyForJob(cursor, source, username, item[1])
-                    elif decide == '1':
-                        jobs.SavedJob(cursor, source, username, item[0])
-                    else:
-                        listJobs(cursor, source, username)
-                elif option == '1':
-                    applyForJob(cursor, source, username, item[1])
-                elif option == '3':
-                    jobs.SavedJob(cursor, source, username, item[1])
-                elif option == '2':
-                    continue
-                else:
-                    listJobs(cursor, source, username)
-    # applied jobs
-    elif choice == '1':
-        cursor.execute(
-            "SELECT * FROM userJobRelation, jobs WHERE userJobRelation.jobID == jobs.jobID AND userJobRelation.username == ?;",
-            (username,))
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            if item[2] == 'applied':
-                print("You've applied to " + item[8] + " with " + item[10] + " at " + item[11])
-    # Unapplied job
-    elif choice == '2':
-        cursor.execute(
-            "SELECT * FROM jobs WHERE jobID NOT IN (SELECT userJobRelation.jobID FROM userJobRelation, jobs AS J WHERE userJobRelation.jobID = J.jobID AND userJobRelation.status = 'applied' AND userJobRelation.username == ?);",
-            (username,))
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            if item[1] == username:
-                continue
-            option = input(item[
-                               2] + ": You have not applied yet for this position.\n Would you like to view more details (0) apply (1), or go to the next listing (2), save for later (3), anything else to return to previous screen: ")
-            if option == '0':
-                print("title: " + item[2])
-                print("description: " + item[3])
-                print("employer: " + item[4])
-                print("location: " + item[5])
-                print("salary: " + str(item[6]))
-                decide = input(
-                    "Would you like to apply for this job? 0 for yes, 1 for next listing, 3 for save, anything else to return to previous screen: ")
-                if decide == '0':
-                    applyForJob(cursor, source, username, item[0])
-                elif decide == '1':
-                    continue
-                else:
-                    listJobs(cursor, source, username)
-            elif option == '1':
-                applyForJob(cursor, source, username, item[0])
-            elif option == '2':
-                continue
-            elif option == '3':
-                jobs.SavedJob(cursor, source, username, item[0])
-            else:
-                listJobs(cursor, source, username)
-    # elif choice == '3:
-    else:
-        Options(cursor, source, username)
-    listJobs(cursor, source, username)
-
-
-def applyForJob(cursor, source, username, jobID):
-    cont = True
-    graduation = input("What is your graduation date? (mm/dd/yyyy): ")
-    while cont:
-        if graduation[2] != '/' or graduation[5] != '/' or len(graduation) != 10:
-            graduation = input("Invalid format. What is your graduation date? (mm/dd/yyyy): ")
-            continue
-        graduation = graduation.replace("/", "")
-        if (not graduation.isnumeric()) or len(graduation) != 8:
-            graduation = input("Invalid format. What is your graduation date? (mm/dd/yyyy): ")
-            continue
-        else:
-            break
-
-    start = input("What is your expected start date? (mm/dd/yyyy): ")
-    while cont:
-        if start[2] != '/' or start[5] != '/' or len(start) != 10:
-            start = input("Invalid format. What is your expected start date? (mm/dd/yyyy): ")
-            continue
-        start = start.replace("/", "")
-        if (not start.isnumeric()) or len(start) != 8:
-            start = input("Invalid format. What is your expected start date? (mm/dd/yyyy): ")
-            continue
-        else:
-            break
-    reason = input("In a paragraph, explain why you think you'd be a good fit for this job: ")
-
-    cursor.execute("SELECT * FROM userJobRelation WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",
-                   (jobID, username))
-    items = cursor.fetchall()
-    items = list(items)
-    if len(items) != 0:
-        for item in items:
-            cursor.execute(
-                "UPDATE userJobRelation SET graduation_date = ? WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",
-                (graduation, jobID, username))
-            cursor.execute(
-                "UPDATE userJobRelation SET start_date = ? WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",
-                (start, jobID, username))
-            cursor.execute(
-                "UPDATE userJobRelation SET reasoning = ? WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",
-                (reason, jobID, username))
-            cursor.execute(
-                "UPDATE userJobRelation SET status = 'applied' WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",
-                (jobID, username))
-            source.commit()
-    else:
-        cursor.execute(
-            "INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, 'applied', ?, ?, ?);",
-            (username, jobID, graduation, start, reason))
-        source.commit()
-    print("Successfully applied!")
-    Options(cursor, source, username)
 
 
 # Search for person within the database and then ask user to join if person is found
@@ -722,142 +489,6 @@ def FindPerson1(cursor, username, source):
 
     print("")
 
-
-# View friends. Assumes that we want to display the friend's username
-def ShowConnections(cursor, source, username):
-    # Check if user has plus membership
-    cursor.execute("SELECT * FROM users")
-    names = cursor.fetchall()
-    names = list(names)
-    hadResult = False
-    for name in names:
-        if (name[0] == username):
-            if (name[8] == "plus"):
-                print("Would you like to send a message? type 'message' ")
-                choice = input()
-                choice.lower()
-                if choice == "message":
-                    message.SendMessage(cursor, source, username, "")
-            elif (name[8] == "standard"):
-                connections = getConnections(cursor, source, username)
-                hadResult = False
-                for connection in connections:
-                    if connection.status != "pending":
-                        hadResult = True
-                        print(f"Connection's name: {connection.friend}")
-                        connectionProfile = readProfile(cursor, connection.friend)
-                        if connectionProfile:
-                            print("This connection has a profile, would you like to look at it? 'yes' to view it")
-                            choice = input()
-                            if choice == 'yes':
-                                printProfile(connectionProfile)
-                        print("Would you like to disconnect with this person? type 'disconnect' if you would like it.")
-                        print("Would you like to send a message? type 'message' ")
-                        choice = input()
-                        choice.lower()
-                        if choice == "disconnect":
-                            exFriend = connection.friend
-                            connection.disconnect()
-                            print(f"You disconnected with {exFriend}")
-                        elif choice == "message":
-                            message.SendMessage(cursor, source, username, connection.friend)
-
-    if not hadResult:
-        print("No connections were found")
-    Options(cursor, source, username)
-
-
-# send a friend request
-def MakeFriend(cursor, source, username):
-    last_name = input("Please enter a last name, 0 for none: ")
-    major = input("Please enter a major, 0 for none: ")
-    university = input("Please enter a university, 0 for none: ")
-
-    if last_name == '0' and major == '0' and university == '0':
-        choice = input(
-            "Invalid. Please enter at least one name, major or university. Would you like to search again? 0 for yes ")
-        if choice == '0':
-            MakeFriend(cursor, source, username)
-        else:
-            Options(cursor, source, username)
-    found = False
-    if major == '0' and university == '0':
-        cursor.execute("SELECT * FROM users")
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            if last_name == item[3]:
-                cursor.execute(
-                    "SELECT * FROM friends WHERE (friendOne == ? AND friendTwo == ?) OR (friendOne == ? AND friendTwo == ?);",
-                    (username, item[0], item[0], username))
-                values = cursor.fetchall()
-                values = list(values)
-                if len(values) == 1:
-                    continue
-                if username != item[0]:
-                    decision = input(item[2] + ' ' + item[
-                        3] + ' is in the College System? Would you like to add this person? 0 for yes: ')
-                    if decision == '0':
-                        cursor.execute("INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, 'pending');",
-                                       (username, item[0]))
-                        source.commit()
-                        print("Friend Request Sent")
-    else:
-        cursor.execute("SELECT * FROM users, profiles WHERE profiles.belongsTo == users.username;")
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            if (last_name == '0' or last_name == item[3]) and (major == '0' or major == item[10]) and (
-                    university == '0' or university == item[11]):
-                cursor.execute(
-                    "SELECT * FROM friends WHERE (friendOne == ? AND friendTwo == ?) OR (friendOne == ? AND friendTwo == ?);",
-                    (username, item[0], item[0], username))
-                values = cursor.fetchall()
-                values = list(values)
-                if len(values) == 1:
-                    continue
-                if username != item[0]:
-                    decision = input(item[2] + ' ' + item[
-                        3] + ' is in the College System. Would you like to add this person? 0 for yes: ')
-                    if decision == '0':
-                        cursor.execute("INSERT INTO friends (friendOne, friendTwo, status) VALUES (?, ?, 'pending');",
-                                       (username, item[0]))
-                        source.commit()
-                        print("Friend Request Sent")
-    Options(cursor, source, username)
-
-
-# view any incoming friend requests or pending friend requests
-def ViewFriendRequest(cursor, source, username):
-    choice = input("View Incoming Friend Requests or Pending Requests Sent? 0 for incoming: ")
-    if choice == '0':
-        cursor.execute("SELECT * FROM friends WHERE friendTwo == ? AND status == 'pending';", (username,))
-        items = cursor.fetchall()
-        items = list(items)
-        for item in items:
-            option = input("Would you like to accept " + item[0] + "? 0 for accept: ")
-            if option == '0':
-                cursor.execute("UPDATE friends SET status='active' WHERE friendOne == ? AND friendTwo == ?;",
-                               (item[0], username))
-                source.commit()
-            else:
-                cursor.execute("DELETE FROM friends WHERE friendOne == ? AND friendTwo == ?;", (item[0], username))
-                source.commit()
-    else:
-        cursor.execute("SELECT * FROM friends WHERE friendOne == ? AND status == 'pending'", (username,))
-        items = cursor.fetchall()
-        items = list(items)
-        print("Pending Requests Sent: ")
-        for item in items:
-            print(item[1])
-
-    decision = input("Would you like to return to the main menu? 0 for yes: ")
-    if decision == '0':
-        Options(cursor, source, username)
-    else:
-        ViewFriendRequest(cursor, source, username)
-
-
 # search when not signed in
 def FindPerson(cursor, source):
     first_Name = input("Please enter a first name: ")
@@ -888,156 +519,6 @@ def FindPerson(cursor, source):
 
     print("")
 
-
-# Profile creation
-def inProfile(cursor, source, username):
-    result = profile.readProfile(cursor, username)
-    if not result:
-        print("You don't have a profile, would you like to create one? Type 'yes' to create it")
-        choice = input()
-        if choice.lower() == "yes":
-            newProfile = profile.Profile(username)
-            EditProfile(newProfile, cursor)
-            profile.createProfile(cursor, source, newProfile)
-        Options(cursor, source, username)
-        # inform user they don't have a profile and offer options to create or go back
-    else:
-        printProfile(result)
-        print("Would you like to update your profile? type 'yes' to update it")
-
-        choice = input()
-        if choice.lower() == "yes":
-            EditProfile(result, cursor)
-            profile.updateProfile(cursor, source, result)
-        Options(cursor, source, username)
-
-
-# Will get the desired changes to profile and return the profile object
-# added cursor so that test_inCollege can pass input to the questions
-def EditProfile(profile, cursor):
-    if profile.title:
-        message = f"The title of your profile is {profile.title}. Would you like to change it? 'yes' to change it"
-    else:
-        message = f"You don't have a title for your profile. Would you like to create it? 'yes' to create it"
-    print(message)
-    choice = input()
-    if choice == "yes":
-        profile.title = input("Enter the title ")
-    if profile.major:
-        message = f"The major of your profile is {profile.major}. Would you like to change it? 'yes' to change it"
-    else:
-        message = f"You don't have a major for your profile. Would you like to create it? 'yes' to create it"
-    print(message)
-    choice = input()
-    if choice == "yes":
-        profile.major = input("Enter the major ")
-    if profile.university:
-        message = f"The university of your profile is {profile.university}. Would you like to change it? 'yes' to change it"
-        print(message)
-    else:
-        message = f"You don't have a university for your profile. Would you like to create it? 'yes' to create it"
-    print(message)
-    choice = input()
-    if choice == "yes":
-        profile.university = input("Enter the university ")
-    if profile.about:
-        message = f"The about of your profile is {profile.about}. Would you like to change it? 'yes' to change it"
-    else:
-        message = f"You don't have about for your profile. Would you like to create it? 'yes' to create it"
-    print(message)
-    choice = input()
-    if choice == "yes":
-        profile.about = input("Enter the about ")
-    print("Experience Section:")
-    for i, job in enumerate(profile.experience):
-        printProfileJob(job, i)
-        print("Would you like to edit this job? 'yes' to edit")
-        choice = input()
-        if choice == "yes":
-            editProfileJob(profile.experience[i])
-    if len(profile.experience) < 3:
-        print("Would you like to add another job? 'yes' to add it")
-        choice = input()
-        if choice == 'yes':
-            newJob = ProfileJob()
-            editProfileJob(newJob)
-            profile.experience.append(newJob)
-    print("Education Section: ")
-    if profile.degree:
-        message = f"The degree of your profile is {profile.degree}. Would you like to change it? 'yes' to change it"
-    else:
-        message = f"You don't information about your degree. Would you like to add it? 'yes' to add it"
-    print(message)
-    choice = input()
-    if choice == "yes":
-        profile.about = input("Enter the degree ")
-    if profile.yearsAtUni:
-        message = f"The years attended of your profile is {profile.yearsAtUni}. Would you like to change it? 'yes' to change it"
-    else:
-        message = f"You don't have specified how many years you attended your university. Would you like to create it? Type 'yes' to create it"
-    print(message)
-    choice = input()
-    if choice == "yes":
-        profile.about = input("Enter the years attended ")
-
-
-def editProfileJob(job):
-    attrs = job.__dict__
-    for key in attrs:
-        if attrs[key]:
-            message = f"The {key} of this job is {attrs[key]}. Would you like to change it? 'yes' to change it"
-        else:
-            message = f"This job doesn't have a {key}. Would you like to create it? Type 'yes' to create it"
-        print(message)
-        choice = input()
-        if choice == "yes":
-            profile.about = input(f"Enter the {key}")
-        elif choice == "no":
-            pass
-        else:
-            print("invalid input")
-
-
-def printProfileJob(job, index):
-    print(f"Job {index + 1}:")
-    print("-------")
-    attrs = job.__dict__
-    for key in attrs:
-        print(f"{key}: {attrs[key]}")
-
-
-def printProfile(profile):
-    print("\nProfile: ")
-    print("-------------")
-    print(f"Title: {profile.title}")
-    print(f"Major: {profile.major}")
-    print(f"University: {profile.university}")
-    print(f"About: {profile.about}")
-    print(f"\nExperience Section:")
-    print("-------------------------")
-    for i, job in enumerate(profile.experience):
-        printProfileJob(job, i)
-    print("\nEducation Section:")
-    print("-------------------------")
-    print(f"School Name: {profile.university}")
-    print(f"Degree: {profile.degree}")
-    print(f"Years attedend: {profile.yearsAtUni}")
-
-    # Handle the experience case
-def profileMessage(cursor,username):
-    cursor.execute(f"SELECT count(belongsTo) FROM profiles WHERE belongsTo='{username}' ")  
-    result = cursor.fetchone()
-    if result[0] == 0: {
-        print("Dont forget to create a profile")
-    }
-
-def waitingMessages(cursor,username):
-    cursor.execute(f"SELECT * FROM messages WHERE receiver = '{username}' ")  
-    result = cursor.fetchone()
-    if result[0] >= 1 and result[0] != username: {
-        print("You have messages waiting for you")
-    }
-
 # C++  Java Python SQL JavaScript
 def SkillSelect(username, cursor, source):
     print(
@@ -1067,3 +548,49 @@ def SelectedSkill(skill, username, cursor, source):
     else:
         print("Invalid Selection")
         Options(cursor, source, username)
+
+def trainingProgram():
+    print("Please choose one of the options you would like")
+    print("0 for Training and Education | 1 for IT Help Desk  | 2 for Business Analysis and Strategy | 3 for Security ")
+    option = input()
+    if option == "0":
+        print("Please choose one of the options you would like")
+        print("0 for Interview Training, 1 for Resume Building, 2 for Professional Writing, 3 for Cracking Code interview")
+        trainingOption = input()
+        if trainingOption == "0":
+            print("Under Construction")
+        elif trainingOption == "1":
+            print("Under Construction")
+        elif trainingOption == "2":
+            print("Under Construction")
+        elif trainingOption == "3":
+            print("Under Construction")
+        main.Main()
+        print("")
+    elif option == "1":
+        print("Coming Soon!")
+        main.Main()
+        print("")
+    elif option == "2":
+        print("Please choose one of the options")
+        print(" 0 for How to use inCollege Learning, 1 for Train the trainer, 2 for Gamification of learning, 3 for else")
+        option2 = input()
+        if option2 == "0":
+            print("Please choose sign in from the menu and sign in to see the rest of the results ")
+            main.Main()
+            print("")
+        elif option2 == "1":
+            print("Please choose sign in from the menu and sign in to see the rest of the results")
+            main.Main()
+            print("")
+        elif option2 == "2":
+            print("Please choose sign in from the menu and sign in to see the rest of the results")
+            main.Main()
+            print("")
+        else:
+            print("Not seeing what you’re looking for? Sign in to see all 7,609 results.")
+            main.Main()
+            print("")
+    elif option == "3":
+        print("Coming Soon!")
+        main.Main()

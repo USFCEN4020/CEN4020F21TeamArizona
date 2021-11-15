@@ -334,7 +334,7 @@ def test_postingJob(monkeypatch, capsys, testDB):
     source.commit()
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.SearchJob(cursor, source, "mrburns")
+        jobs.SearchJob(cursor, source, "mrburns")
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOuput
@@ -523,11 +523,11 @@ def test_ViewProfile(monkeypatch, capsys, testDB):
     #reads profile and checks the printed function to the expected
     #output
     prof = profile.readProfile(cursor, 'homer')
-    out = inCollege.printProfile(prof)
+    out = profile.printProfile(prof)
     desiredOutput = str(out)
     try:
         #since we just care about the printing of the menu test using the printProfile function 
-        inCollege.printProfile(prof)
+        profile.printProfile(prof)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -546,11 +546,11 @@ def test_EditProfile(monkeypatch, capsys, testDB):
     homer = profile.readProfile(source, 'homer')
     #make profile to check to make sure edits are valid
     prof = profile.Profile('homer', 'Engineer', 'Computer Science', 'Su', 'Na', 'Bs', 4)
-    out = inCollege.printProfile(prof)
+    out = profile.printProfile(prof)
     desiredOutput = str(out)
     
     try:
-       inCollege.EditProfile(homer,"")
+       profile.EditProfile(homer,"")
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -571,13 +571,13 @@ def test_TryPartial(monkeypatch, capsys, testDB):
     #homer profile to check output against Homer
     homer = profile.readProfile(source, 'homer')
     prof =  profile.readProfile(source, 'Homer')
-    out = inCollege.printProfile(prof)
+    out = profile.printProfile(prof)
     desiredOutput = str(out)
 
     try:
         #edit homer information, change homer -> Homer and leave rest partial
         #monkeypatch uses "" to pass input to functions
-        inCollege.EditProfile(homer,"")
+        profile.EditProfile(homer,"")
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -593,7 +593,7 @@ def test_ProfileInfo(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'homer')
+        profile.inProfile(cursor, source, 'homer')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -609,7 +609,7 @@ def test_AboutInfo(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'bart')
+        profile.inProfile(cursor, source, 'bart')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -626,7 +626,7 @@ def test_EducationInfo(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'Bob')
+        profile.inProfile(cursor, source, 'Bob')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -642,7 +642,7 @@ def test_NameConv(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'Ash')
+        profile.inProfile(cursor, source, 'Ash')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -662,7 +662,7 @@ def test_Experience(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.inProfile(cursor, source, 'John')
+        profile.inProfile(cursor, source, 'John')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output
@@ -724,7 +724,7 @@ def test_MakeFriend(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.MakeFriend(cursor, source, 'homer')
+        connection.MakeFriend(cursor, source, 'homer')
     except(StopIteration):
         output = capsys.readouterr().out
         print(output)
@@ -749,7 +749,7 @@ def test_AcceptFriendRequest(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.ViewFriendRequest(cursor, source, 'homer')
+        connection.ViewFriendRequest(cursor, source, 'homer')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -773,7 +773,7 @@ def test_RejectFriendRequest(monkeypatch, capsys, testDB):
     source.commit()
 
     try:
-        inCollege.ViewFriendRequest(cursor, source, 'homer')
+        connection.ViewFriendRequest(cursor, source, 'homer')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -788,12 +788,12 @@ def test_JobPostingMax(monkeypatch, capsys, testDB):
         cursor.execute('INSERT INTO users (username, password, firstName, lastName) VALUES (?, ?, ?, ?)',
                         ('tommorello', 'Morello12@', 'Tom', 'Morello'))
         try:
-            inCollege.SearchJob(cursor,source,"tommorello")
+            jobs.SearchJob(cursor,source,"tommorello")
         except: pass
     inputs = iter((["yes"] + ["soul power" for _ in range(5)] + ["1"]))
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-            inCollege.SearchJob(cursor,source,"tommorello")
+            jobs.SearchJob(cursor,source,"tommorello")
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -805,7 +805,7 @@ def test_DeleteJob(monkeypatch, testDB):
     inputs = iter(['remove','Sound Engineer'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.SearchJob(cursor,source,"tommorello")
+        jobs.SearchJob(cursor,source,"tommorello")
     except(StopIteration):
         cursor.execute("SELECT * FROM jobs WHERE jobID = 0")
         result = cursor.fetchall()
@@ -821,7 +821,7 @@ def test_applyForJob(monkeypatch, capsys, testDB):
     inputs = iter(['07/01/2022', '08/01/2022', 'i need a job'])
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.applyForJob(cursor, source, "tommorello",0)
+        jobs.applyForJob(cursor, source, "tommorello",0)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
@@ -986,7 +986,7 @@ def test_PlusMemberCanSeeUsers(monkeypatch, capsys,testDB):
     desiredOutput = 'List of Students: \nFirst Name       Last Name\n----------       ---------\nTom      Morello\nSlash      wat?\n'
     monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
     try:
-        Messages(cursor,source,'tommorello')
+        message.Messages(cursor,source,'tommorello')
     except(StopIteration):
         output = capsys.readouterr().out[114:-42]
         assert desiredOutput == output
@@ -1002,7 +1002,7 @@ def test_PlusMemberCanMessageUsers(monkeypatch, capsys, testDB):
     desiredOutput = 'Message sent!'
     monkeypatch.setattr('builtins.input', lambda _="":next(inputs))
     try:
-        Messages(cursor,source,'tommorello')
+        message.Messages(cursor,source,'tommorello')
     except:
         output = capsys.readouterr().out[290:-209]
         assert output == desiredOutput
@@ -1036,7 +1036,7 @@ def test_NumberJobNotification(monkeypatch, capsys, testDB):
     source.commit()
     desiredOutput = 'You have currently applied for 1 jobs\n'
     try:
-        inCollege.SearchJob(cursor, source, 'tommorello')
+        jobs.SearchJob(cursor, source, 'tommorello')
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput

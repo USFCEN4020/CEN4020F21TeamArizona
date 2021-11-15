@@ -143,6 +143,17 @@ CREATE TABLE notifications
     notification TEXT
 );
 """
+
+createCoursesTaken = """
+    CREATE TABLE coursesTaken
+    (
+        username TEXT,
+        course TEXT,
+        CONSTRAINT username
+            FOREIGN KEY(username) REFERENCES users(username)
+        PRIMARY KEY(username,course)
+    );
+"""
 # =============================================================================
 # createOptionTable = """
 # 
@@ -166,6 +177,7 @@ cursor.execute(createFriendTable)
 cursor.execute(createUserJobRelation)
 cursor.execute(createMessages)
 cursor.execute(createNotifications)
+cursor.execute(createCoursesTaken)
 #cursor.execute(createOptionTable)
 source.commit()
 

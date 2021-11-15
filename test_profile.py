@@ -1,3 +1,4 @@
+import inCollege
 import profile
 import sqlite3
 
