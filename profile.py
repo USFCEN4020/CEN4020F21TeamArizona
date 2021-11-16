@@ -1,5 +1,7 @@
+import api
 import inCollege
 import profile
+from sys import stdout
 
 # Utility Lambda:
 
@@ -46,6 +48,7 @@ def createProfile(cursor, connection, profile):
                     """
                 values = (i,profile.username,job.title,job.employer,job.location,job.dateStarted,job.dateEnded,job.description)  
                 cursor.execute(query,values)
+    api.profilesAPI(connection,cursor)
 
 def readProfile(cursor, username):
     cursor.execute(f"SELECT * FROM profiles WHERE belongsTo = '{username}'")
@@ -81,7 +84,7 @@ def updateProfile(cursor, connection, profile):
                 WHERE jobID={i} AND fromUser='{profile.username}'
             """
             cursor.execute(query)
-
+    api.profilesAPI(connection,cursor)
 
 # Profile creation
 def inProfile(cursor, source, username):
@@ -185,34 +188,34 @@ def editProfileJob(job):
         print(message)
         choice = input()
         if choice == "yes":
-            profile.about = input(f"Enter the {key}")
+            job.__dict__[key] = input(f"Enter the {key}")
         elif choice == "no":
             pass
         else:
             print("invalid input")
 
 
-def printProfileJob(job, index):
-    print(f"Job {index + 1}:")
-    print("-------")
+def printProfileJob(job, index,outputStream=stdout):
+    print(f"Job {index + 1}:",file=outputStream)
+    print("-------",file=outputStream)
     attrs = job.__dict__
     for key in attrs:
-        print(f"{key}: {attrs[key]}")
+        print(f"{key}: {attrs[key]}",file=outputStream)
 
 
-def printProfile(profile):
-    print("\nProfile: ")
-    print("-------------")
-    print(f"Title: {profile.title}")
-    print(f"Major: {profile.major}")
-    print(f"University: {profile.university}")
-    print(f"About: {profile.about}")
-    print(f"\nExperience Section:")
-    print("-------------------------")
+def printProfile(profile,outputStream=stdout):
+    print("\nProfile: ",file=outputStream)
+    print("-------------",file=outputStream)
+    print(f"Title: {profile.title}",file=outputStream)
+    print(f"Major: {profile.major}",file=outputStream)
+    print(f"University: {profile.university}",file=outputStream)
+    print(f"About: {profile.about}",file=outputStream)
+    print(f"\nExperience Section:",file=outputStream)
+    print("-------------------------",file=outputStream)
     for i, job in enumerate(profile.experience):
-        printProfileJob(job, i)
-    print("\nEducation Section:")
-    print("-------------------------")
-    print(f"School Name: {profile.university}")
-    print(f"Degree: {profile.degree}")
-    print(f"Years attedend: {profile.yearsAtUni}")
+        printProfileJob(job, i,outputStream)
+    print("\nEducation Section:",file=outputStream)
+    print("-------------------------",file=outputStream)
+    print(f"School Name: {profile.university}",file=outputStream)
+    print(f"Degree: {profile.degree}",file=outputStream)
+    print(f"Years attedend: {profile.yearsAtUni}",file=outputStream)

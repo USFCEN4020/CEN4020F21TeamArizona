@@ -11,6 +11,7 @@ import connection
 import jobs
 import message
 import learning
+from sys import stdout
 
 friendNotificationCount = 0
 # Mini function that will capitalize all words in a string
@@ -35,26 +36,30 @@ def logIn(cursor):
     return loggedIn, username
 
 
-def signUp(cursor, source):
+def signUp(cursor, source,apiInputs=None):
     # first checks if the number of rows in Users is 5, if so, that's the maximum number of users
     cursor.execute("SELECT COUNT(*) FROM users")
     if cursor.fetchone()[0] == 10:
+        if apiInputs: raise Exception("Exception: Maximum number of users reached")
         print("Unable to sign up. There is already the maximum number of users.")
         loggedIn = False
         username = " "
     else:
         cont = True
         # asks for the username and then searches the database for that username, printing an error if found
-        username = input("What is your desired username?: ")
+        if not apiInputs: username = input("What is your desired username?: ")
+        else: username = apiInputs["username"]
         while cont:
             cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
             data = cursor.fetchall()
             if len(data) == 0:
                 cont = False
             else:
+                if apiInputs: raise Exception("Exception: Username already exists")
                 print("Username already exists")
                 username = input("Input a new one: ")
-        password = input("What is your desired password?: ")
+        if not apiInputs: password = input("What is your desired password?: ")
+        else: password = apiInputs["password"]
 
         cont = True
 
@@ -64,6 +69,7 @@ def signUp(cursor, source):
             digit = any(word.isdigit() for word in password)
             if len(password) < 8 or len(
                     password) > 12 or capital == False or digit == False or password.isalnum() == True:
+                if apiInputs: raise Exception("Exception: Password is invalid, must between 8 and 12 characters, have a digit, capital letter, and a special character")
                 print(
                     "Invalid option. Password must between 8 and 12 characters, have a digit, capital letter, and a special character")
                 password = input("Try another password: ")
@@ -72,9 +78,12 @@ def signUp(cursor, source):
 
         cont = True
 
-        # Enter first name
-        firstName = input("What is your first name?: ")
-        lastName = input("What is your last name?: ")
+        if not apiInputs:
+            firstName = input("What is your first name?: ")
+            lastName = input("What is your last name?: ")
+        else:
+            firstName = apiInputs["firstName"]
+            lastName = apiInputs["lastName"]
         while cont:
             cursor.execute("SELECT firstName FROM users WHERE firstName = ?", (firstName,))
             fNames = cursor.fetchall()
@@ -92,26 +101,30 @@ def signUp(cursor, source):
                         names = list(names)
                         for name in names:
                             if (firstName == name[2] and lastName == name[3]):
+                                if apiInputs: raise Exception("Exception: first name and last name already exist")
                                 print("User already exists")
                                 firstName = input("Please enter another first name: ")
                                 lastName = input("Please enter another last name: ")
-                            else:
-                                continue
+                            else: continue
                         cont = False
         # Select InCollege membership type (standard or plus)
         membershipType = ""
         monthlyBill = 0
-        acctSel = input("Would you a standard membership (enter 0) or plus membership (enter 1)?: ")
+        if not apiInputs:
+            acctSel = input("Would you a standard membership (enter 0) or plus membership (enter 1)?: ")
+        else:
+            acctSel = apiInputs["membershipCode"]
         if (acctSel == '0'):
             membershipType = "standard"
             monthlyBill = 0
-            print("You are now a standard member!\n")
+            if not apiInputs: print("You are now a standard member!\n")
         elif (acctSel == '1'):
             membershipType = "plus"
             monthlyBill += 10
-            print("You are now a plus member!\n")
-        else:
+            if not apiInputs: print("You are now a plus member!\n")
+        elif not apiInputs:
             membershipType = input("Please enter 0 for standard or 1 for plus:")
+        else: raise Exception("Exception: Membership Code is invalid")
 
         cont = True
 
@@ -439,7 +452,7 @@ def UserSelection(option, username, cursor, source):
     elif option == "incollege links":
         InCollegeLink(cursor, source, username)
     elif option == "profile":
-        profile.inProfile(cursor, source, username, "")
+        profile.inProfile(cursor, source, username)
     elif option == "send a friend request":
         connection.MakeFriend(cursor, source, username)
     elif option == "view friend requests":
@@ -549,9 +562,11 @@ def SelectedSkill(skill, username, cursor, source):
         print("Invalid Selection")
         Options(cursor, source, username)
 
-def trainingProgram():
+def trainingProgram(cursor):
+    trainings = getAllTrainings(cursor)
     print("Please choose one of the options you would like")
-    print("0 for Training and Education | 1 for IT Help Desk  | 2 for Business Analysis and Strategy | 3 for Security ")
+    options = " ".join([f"{i} for {t[0]} |" for i, t in enumerate(trainings[1:-1])])
+    print(options)
     option = input()
     if option == "0":
         print("Please choose one of the options you would like")
@@ -594,3 +609,8 @@ def trainingProgram():
     elif option == "3":
         print("Coming Soon!")
         main.Main()
+
+
+def getAllTrainings(cursor):
+    cursor.execute("SELECT title FROM trainings")
+    return cursor.fetchall()
