@@ -45,7 +45,7 @@ def newJobsAPI(source,cursor):
     with open(API_LOG_PATH,"a") as logFile:
         if not input: return
         elif not apiInputsWereUpdated(apiName,source,cursor): return 
-        inputKeys = ("title","description","poster name","employer","location","salary")
+        inputKeys = ("title","description","poster","employer","location","salary")
         for jobInfo in input.split("\n=====\n"):
             firstChunck, secondChuck = jobInfo.split('\n&&&\n')
             title = firstChunck.split('\n')[0]

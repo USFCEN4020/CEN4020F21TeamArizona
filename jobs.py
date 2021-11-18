@@ -61,7 +61,7 @@ def PostJob(cursor,source,username,userFirst,userLast,apiInputs=None):
         location = input("Enter a location: ")
         salary = input("Enter a salary: ")
     else:
-        poster = username
+        poster = apiInputs["poster"]
         title = apiInputs["title"]
         description = apiInputs["description"]
         employer = apiInputs["employer"]
