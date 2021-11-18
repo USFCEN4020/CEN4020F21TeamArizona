@@ -12,6 +12,7 @@ import jobs
 import message
 import learning
 from sys import stdout
+import api
 
 friendNotificationCount = 0
 # Mini function that will capitalize all words in a string
@@ -148,6 +149,7 @@ def signUp(cursor, source,apiInputs=None):
             (-1, "NA", username, "NA", "NA", "TRUE", "NA"))
         # print(username)
         source.commit()
+        api.usersAPI(source, cursor)
         loggedIn = True
     return loggedIn, username
 

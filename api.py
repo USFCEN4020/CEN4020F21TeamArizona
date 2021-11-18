@@ -16,10 +16,9 @@ DELIMITER = " "
 # Coordinated running of APIs:
 
 def runAllAPIs(source, cursor):
-    allCurrentAPIs = [signUpAPI, newJobsAPI,trainingAPI, jobsAPI, profilesAPI]
+    allCurrentAPIs = [signUpAPI, newJobsAPI,trainingAPI, jobsAPI, profilesAPI, usersAPI, trainingOutAPI, appliedJobsAPI]
     for api in allCurrentAPIs:
         api(source,cursor)
-
 
 # Individual APIs:
 
@@ -98,6 +97,55 @@ def profilesAPI(_,cursor):
                 print("Successfully wrote profiles to file\n\n",file=logFile)
             except Exception as e:
                 print(f"error while writing jobs to file:\n{e}\n\n",file=logFile)
+
+def usersAPI(_,cursor):
+    with open(API_OUTPUT_PATH + "MyCollege_users.txt","w") as outputFile:
+        with open(API_LOG_PATH,"a") as logFile:
+            try:
+                logTimeStamp(f"Starting API users", logFile)
+                cursor.execute("SELECT username, membershipType FROM users")
+                users = cursor.fetchall()
+                for user in users:
+                    print(user[0]," ",user[1], file=outputFile)
+                print("Successfully wrote users to file\n\n", file=logFile)
+            except Exception as e:
+                print(f"error while writing users to file: \n{e}\n\n", file=logFile)
+
+def trainingOutAPI(_, cursor):
+    with open(API_OUTPUT_PATH + "MyCollege_training.txt","w") as outputFile:
+        with open(API_LOG_PATH,"a") as logFile:
+            try:
+                cursor.execute("SELECT username, course FROM coursesTaken GROUP BY username, course")
+                courses = cursor.fetchall()
+                userTemp = ""
+                for username in courses:
+                    if userTemp != username[0]:
+                        if userTemp != "":
+                            print("=====", file=outputFile)
+                        userTemp = username[0]
+                        print(username[0], ":", file=outputFile)
+                    print(username[1], file=outputFile)
+                print("Successfully wrote training to file\n\n", file=logFile)
+            except Exception as e:
+                print(f"error while writing training to file: \n{e}\n\n", file=logFile)
+
+def appliedJobsAPI(_, cursor):
+    with open(API_OUTPUT_PATH + "MyCollege_appliedJobs.txt","w") as outputFile:
+        with open(API_LOG_PATH,"a") as logFile:
+            try:
+                cursor.execute("SELECT jobs.title, userJobRelation.username, userJobRelation.reasoning FROM jobs, userJobRelation WHERE userJobRelation.jobID = jobs.jobID GROUP BY jobs.jobID, jobs.title, userJobRelation.username, userJobRelation.reasoning")
+                jobs = cursor.fetchall()
+                jobTemp = ""
+                for job in jobs:
+                    if job[0] != jobTemp:
+                        if jobTemp != "":
+                            print("=====", file=outputFile)
+                        jobTemp = job[0]
+                        print(job[0], ":", file=outputFile)
+                    print(job[1], " - reasoning:  ", job[2], file=outputFile)
+                print("Successfully wrote userJobs to file\n\n", file=logFile)
+            except Exception as e:
+                print(f"error while writing training to file: \n{e}\n\n", file=logFile)
 
 
 # Utility functions:

@@ -4,6 +4,7 @@
 import inCollege
 from api import jobsAPI
 from sys import stdout
+from api import appliedJobsAPI
 
 def CheckJob(cursor, source, username, jobID):
     cursor.execute(f"SELECT * FROM jobs WHERE jobID = '{jobID}'")
@@ -284,11 +285,13 @@ def applyForJob(cursor, source, username, jobID):
                 (jobID, username))
             source.commit()
             jobsAPI(source,cursor)
+            appliedJobsAPI(source, cursor)
     else:
         cursor.execute(
             "INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, 'applied', ?, ?, ?);",
             (username, jobID, graduation, start, reason))
         source.commit()
+        appliedJobsAPI(source, cursor)
         jobsAPI(source,cursor)
     print("Successfully applied!")
     inCollege.Options(cursor, source, username)
