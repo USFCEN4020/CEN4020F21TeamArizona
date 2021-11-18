@@ -1,304 +1,697 @@
-Tue Nov 16 12:34:03 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+There was an error signing up user homer using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
 {'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
 There was an error signing up user johndoe123 using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
 {'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user donnaWhite using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
 {'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user LazytoCode using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
 {'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user TheFinalCountdown using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
 {'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user BrilliantDiamond using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API signUp with inputs:
 {'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user ShiningPearl using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API newJobs with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 19:43:18 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 19:43:18 2021 :: Starting API newJobs with inputs:
 {'title': 'Software Engineer', 'description': "Become a Software Engineer today with Pokemon!\nIt's one of the best positions out there!\nTrust us!", 'poster name': 'BrilliantDiamond', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
-There was an error posting job Software Engineer using the api with exception:
- Exception: There are already a maximum number of jobs 
+Job posted successfully
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API newJobs with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API newJobs with inputs:
 {'title': 'Tester', 'description': "Become a tester and make sure the code isn't crappy!", 'poster name': 'ShiningPearl', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
-There was an error posting job Tester using the api with exception:
- Exception: There are already a maximum number of jobs 
+Job posted successfully
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API training with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API training with inputs:
  title:1000 ways to succeed
 error while inserting training 1000 ways to succeed:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API training with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API training with inputs:
  title:How to Ace that Interview
 error while inserting training How to Ace that Interview:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API training with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API training with inputs:
  title:How to be better than the next guy
 error while inserting training How to be better than the next guy:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API training with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API training with inputs:
  title:ALl about that Agile
 error while inserting training ALl about that Agile:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API training with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API training with inputs:
  title:Technical v. Behavioral
 error while inserting training Technical v. Behavioral:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API training with inputs:
+Wed Nov 17 19:43:18 2021 :: Starting API training with inputs:
  title:
 error while inserting training :
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API jobs:
+Wed Nov 17 19:43:18 2021 :: Starting API jobs:
 successfully wrote jobs to file
 
 
-Tue Nov 16 12:34:03 2021 :: Starting API profiles for user ('homer',)
 Successfully wrote profiles to file
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+There was an error signing up user homer using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+There was an error signing up user johndoe123 using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user donnaWhite using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user LazytoCode using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user TheFinalCountdown using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user BrilliantDiamond using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user ShiningPearl using the api with exception:
+ no such table: users 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API newJobs with inputs:
+{'title': 'Software Engineer', 'description': "Become a Software Engineer today with Pokemon!\nIt's one of the best positions out there!\nTrust us!", 'poster name': 'BrilliantDiamond', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
+There was an error posting job Software Engineer using the api with exception:
+ no such table: jobs 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API newJobs with inputs:
+{'title': 'Tester', 'description': "Become a tester and make sure the code isn't crappy!", 'poster name': 'ShiningPearl', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
+There was an error posting job Tester using the api with exception:
+ no such table: jobs 
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API training with inputs:
+ title:1000 ways to succeed
+error while inserting training 1000 ways to succeed:
+no such table: trainings
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API training with inputs:
+ title:How to Ace that Interview
+error while inserting training How to Ace that Interview:
+no such table: trainings
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API training with inputs:
+ title:How to be better than the next guy
+error while inserting training How to be better than the next guy:
+no such table: trainings
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API training with inputs:
+ title:ALl about that Agile
+error while inserting training ALl about that Agile:
+no such table: trainings
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API training with inputs:
+ title:Technical v. Behavioral
+error while inserting training Technical v. Behavioral:
+no such table: trainings
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API training with inputs:
+ title:
+error while inserting training :
+no such table: trainings
+
+
+Wed Nov 17 19:47:33 2021 :: Starting API jobs:
+error while writing jobs to file:
+no such table: jobs
+
+
+error while writing jobs to file:
+no such table: profiles
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API newJobs with inputs:
+{'title': 'Software Engineer', 'description': "Become a Software Engineer today with Pokemon!\nIt's one of the best positions out there!\nTrust us!", 'poster name': 'BrilliantDiamond', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
+Job posted successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API newJobs with inputs:
+{'title': 'Tester', 'description': "Become a tester and make sure the code isn't crappy!", 'poster name': 'ShiningPearl', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
+Job posted successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API training with inputs:
+ title:1000 ways to succeed
+Training added successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API training with inputs:
+ title:How to Ace that Interview
+Training added successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API training with inputs:
+ title:How to be better than the next guy
+Training added successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API training with inputs:
+ title:ALl about that Agile
+Training added successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API training with inputs:
+ title:Technical v. Behavioral
+Training added successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API training with inputs:
+ title:
+Training added successfully
+
+
+Wed Nov 17 19:47:48 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Successfully wrote profiles to file
+
+
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+There was an error signing up user homer using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
 {'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
 There was an error signing up user johndoe123 using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
 {'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user donnaWhite using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
 {'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user LazytoCode using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
 {'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user TheFinalCountdown using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
 {'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user BrilliantDiamond using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API signUp with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API signUp with inputs:
 {'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user ShiningPearl using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API newJobs with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 19:47:52 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 19:47:52 2021 :: Starting API newJobs with inputs:
 {'title': 'Software Engineer', 'description': "Become a Software Engineer today with Pokemon!\nIt's one of the best positions out there!\nTrust us!", 'poster name': 'BrilliantDiamond', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
-There was an error posting job Software Engineer using the api with exception:
- Exception: There are already a maximum number of jobs 
+Job posted successfully
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API newJobs with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API newJobs with inputs:
 {'title': 'Tester', 'description': "Become a tester and make sure the code isn't crappy!", 'poster name': 'ShiningPearl', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
-There was an error posting job Tester using the api with exception:
- Exception: There are already a maximum number of jobs 
+Job posted successfully
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API training with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API training with inputs:
  title:1000 ways to succeed
 error while inserting training 1000 ways to succeed:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API training with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API training with inputs:
  title:How to Ace that Interview
 error while inserting training How to Ace that Interview:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API training with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API training with inputs:
  title:How to be better than the next guy
 error while inserting training How to be better than the next guy:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API training with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API training with inputs:
  title:ALl about that Agile
 error while inserting training ALl about that Agile:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API training with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API training with inputs:
  title:Technical v. Behavioral
 error while inserting training Technical v. Behavioral:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API training with inputs:
+Wed Nov 17 19:47:52 2021 :: Starting API training with inputs:
  title:
 error while inserting training :
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API jobs:
+Wed Nov 17 19:47:52 2021 :: Starting API jobs:
 successfully wrote jobs to file
 
 
-Tue Nov 16 12:36:20 2021 :: Starting API profiles for user ('homer',)
 Successfully wrote profiles to file
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API profiles for user ('Bob',)
-Successfully wrote profiles to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API jobs:
-successfully wrote jobs to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API jobs:
-successfully wrote jobs to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API jobs:
-successfully wrote jobs to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API jobs:
-successfully wrote jobs to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API profiles for user ('homer',)
-Successfully wrote profiles to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:41:58 2021 :: Starting API profiles for user ('homer',)
-Successfully wrote profiles to file
+Wed Nov 17 20:09:14 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API signUp with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+There was an error signing up user homer using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
 {'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
 There was an error signing up user johndoe123 using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API signUp with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
 {'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user donnaWhite using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API signUp with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
 {'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user LazytoCode using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API signUp with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
 {'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user TheFinalCountdown using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API signUp with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
 {'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user BrilliantDiamond using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API signUp with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API signUp with inputs:
 {'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
 There was an error signing up user ShiningPearl using the api with exception:
  Exception: Username already exists 
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API newJobs with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API newJobs with inputs:
 {'title': 'Software Engineer', 'description': "Become a Software Engineer today with Pokemon!\nIt's one of the best positions out there!\nTrust us!", 'poster name': 'BrilliantDiamond', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
-There was an error posting job Software Engineer using the api with exception:
- Exception: There are already a maximum number of jobs 
+Job posted successfully
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API newJobs with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API newJobs with inputs:
 {'title': 'Tester', 'description': "Become a tester and make sure the code isn't crappy!", 'poster name': 'ShiningPearl', 'employer': 'Pokemon', 'location': 'Tokyo, Japan', 'salary': '80000'}
-There was an error posting job Tester using the api with exception:
- Exception: There are already a maximum number of jobs 
+Job posted successfully
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API training with inputs:
+Wed Nov 17 20:09:39 2021 :: Starting API training with inputs:
+ title:1000 ways to succeed
+Training added successfully
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API training with inputs:
+ title:How to Ace that Interview
+Training added successfully
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API training with inputs:
+ title:How to be better than the next guy
+Training added successfully
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API training with inputs:
+ title:ALl about that Agile
+Training added successfully
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API training with inputs:
+ title:Technical v. Behavioral
+Training added successfully
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API training with inputs:
+ title:
+Training added successfully
+
+
+Wed Nov 17 20:09:39 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Successfully wrote profiles to file
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+There was an error signing up user homer using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+There was an error signing up user johndoe123 using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user donnaWhite using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user LazytoCode using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user TheFinalCountdown using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user BrilliantDiamond using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user ShiningPearl using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:41 2021 :: Starting API training with inputs:
  title:1000 ways to succeed
 error while inserting training 1000 ways to succeed:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API training with inputs:
+Wed Nov 17 20:09:41 2021 :: Starting API training with inputs:
  title:How to Ace that Interview
 error while inserting training How to Ace that Interview:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API training with inputs:
+Wed Nov 17 20:09:41 2021 :: Starting API training with inputs:
  title:How to be better than the next guy
 error while inserting training How to be better than the next guy:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API training with inputs:
+Wed Nov 17 20:09:41 2021 :: Starting API training with inputs:
  title:ALl about that Agile
 error while inserting training ALl about that Agile:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API training with inputs:
+Wed Nov 17 20:09:41 2021 :: Starting API training with inputs:
  title:Technical v. Behavioral
 error while inserting training Technical v. Behavioral:
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API training with inputs:
+Wed Nov 17 20:09:41 2021 :: Starting API training with inputs:
  title:
 error while inserting training :
 UNIQUE constraint failed: trainings.title
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API jobs:
+Wed Nov 17 20:09:41 2021 :: Starting API jobs:
 successfully wrote jobs to file
 
 
-Tue Nov 16 12:42:09 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+There was an error signing up user homer using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+There was an error signing up user johndoe123 using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user donnaWhite using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user LazytoCode using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user TheFinalCountdown using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user BrilliantDiamond using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+There was an error signing up user ShiningPearl using the api with exception:
+ Exception: Username already exists 
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API training with inputs:
+ title:1000 ways to succeed
+error while inserting training 1000 ways to succeed:
+UNIQUE constraint failed: trainings.title
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API training with inputs:
+ title:How to Ace that Interview
+error while inserting training How to Ace that Interview:
+UNIQUE constraint failed: trainings.title
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API training with inputs:
+ title:How to be better than the next guy
+error while inserting training How to be better than the next guy:
+UNIQUE constraint failed: trainings.title
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API training with inputs:
+ title:ALl about that Agile
+error while inserting training ALl about that Agile:
+UNIQUE constraint failed: trainings.title
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API training with inputs:
+ title:Technical v. Behavioral
+error while inserting training Technical v. Behavioral:
+UNIQUE constraint failed: trainings.title
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API training with inputs:
+ title:
+error while inserting training :
+UNIQUE constraint failed: trainings.title
+
+
+Wed Nov 17 20:09:50 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
 Successfully wrote profiles to file
 
 

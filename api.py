@@ -1,8 +1,9 @@
 import jobs
-from os.path import exists
+from os.path import exists, getmtime
 from datetime import datetime
 import inCollege
 import profile
+from time import time
 
 # Constants:
 
@@ -40,9 +41,11 @@ def signUpAPI(source,cursor):
                 print(f"There was an error signing up user {inputMappings['username']} using the api with exception:\n {e} \n\n",file=logFile)
 
 def newJobsAPI(source,cursor):
-    input = readFileIfExists("newJobs.txt")
+    apiName = "newJobs.txt"
+    input = readFileIfExists(apiName)
     with open(API_LOG_PATH,"a") as logFile:
         if not input: return
+        elif not apiInputsWereUpdated(apiName,source,cursor): return 
         inputKeys = ("title","description","poster name","employer","location","salary")
         for jobInfo in input.split("\n=====\n"):
             firstChunck, secondChuck = jobInfo.split('\n&&&\n')
@@ -53,6 +56,7 @@ def newJobsAPI(source,cursor):
             try:
                 jobs.PostJob(cursor,source,None,None,None,inputMappings)
                 print("Job posted successfully\n\n",file=logFile)
+                updateAPIHistory(apiName,source,cursor)
             except Exception as e:
                 print(f"There was an error posting job {inputMappings['title']} using the api with exception:\n {e} \n\n",file=logFile)
 
@@ -112,3 +116,12 @@ def printJob(rawQueryOutput,outputFile):
         if formatedJob[key]:
             print(key,":",formatedJob[key],file=outputFile)
     print("\n=====\n",file=outputFile)
+
+def apiInputsWereUpdated(apiName,source,cursor):
+    cursor.execute(f"SELECT lastMod FROM apiHistory WHERE apiName = '{apiName}'")
+    lastMod = cursor.fetchone()[0]
+    return lastMod < getmtime(API_INPUT_PATH + apiName)
+
+
+def updateAPIHistory(apiName,source,cursor):
+    with source: cursor.execute(f"UPDATE apiHistory SET lastMod = {time()} WHERE apiName = '{apiName}'")
