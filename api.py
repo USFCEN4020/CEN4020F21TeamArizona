@@ -147,6 +147,24 @@ def appliedJobsAPI(_, cursor,filename="MyCollege_appliedJobs.txt"):
             except Exception as e:
                 print(f"error while writing training to file: \n{e}\n\n", file=logFile)
 
+def savedJobsAPI(_, cursor):
+    with open(API_OUTPUT_PATH + "MyCollege_savedJobs.txt","w") as outputFile:
+        with open(API_LOG_PATH,"a") as logFile:
+            try:
+                cursor.execute("SELECT userJobrelation.username, jobs.title FROM jobs, userJobRelation WHERE userJobRelation.jobID = jobs.jobID AND userJobRelation.status = 'saved' GROUP BY userJobRelation.username, jobs.jobID, jobs.title")
+                users = cursor.fetchall()
+                userTemp = ""
+                for user in users:
+                    if user[0] != userTemp:
+                        if userTemp != "":
+                            print("=====", file=outputFile)
+                        userTemp = user[0]
+                        print(user[0], ":", file=outputFile)
+                    print(user[1], file=outputFile)
+                print("Successfully wrote saved jobs to file\n\n", file=logFile)
+            except Exception as e:
+                print(f"error while writing saved jobs to file: \n{e}\n\n", file=logFile)
+
 
 # Utility functions:
 
