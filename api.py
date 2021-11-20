@@ -22,8 +22,8 @@ def runAllAPIs(source, cursor):
 
 # Individual APIs:
 
-def signUpAPI(source,cursor):
-    input = readFileIfExists("studentAccounts.txt")
+def signUpAPI(source,cursor,filename="studentAccounts.txt"):
+    input = readFileIfExists(filename)
     with open(API_LOG_PATH,"a") as logFile:
         if not input: return
         inputKeys = ("username","firstName","lastName","password","membershipCode")
@@ -39,8 +39,8 @@ def signUpAPI(source,cursor):
             except Exception as e:
                 print(f"There was an error signing up user {inputMappings['username']} using the api with exception:\n {e} \n\n",file=logFile)
 
-def newJobsAPI(source,cursor):
-    apiName = "newJobs.txt"
+def newJobsAPI(source,cursor,filename="newJobs.txt"):
+    apiName = filename
     input = readFileIfExists(apiName)
     with open(API_LOG_PATH,"a") as logFile:
         if not input: return
@@ -59,8 +59,8 @@ def newJobsAPI(source,cursor):
             except Exception as e:
                 print(f"There was an error posting job {inputMappings['title']} using the api with exception:\n {e} \n\n",file=logFile)
 
-def trainingAPI(source,cursor):
-    input = readFileIfExists("newtraining.txt")
+def trainingAPI(source,cursor,filename="newtraining.txt"):
+    input = readFileIfExists(filename)
     with open(API_LOG_PATH,"a") as logFile:
         if not input: return
         for title in input.split("\n"):
@@ -71,8 +71,8 @@ def trainingAPI(source,cursor):
             except Exception as e:
                 print(f"error while inserting training {title}:\n{e}\n\n",file=logFile) 
 
-def jobsAPI(_,cursor):
-    with open(API_OUTPUT_PATH + "MyCollege_jobs.txt","w") as outputFile:
+def jobsAPI(_,cursor,filename="MyCollege_jobs.txt"):
+    with open(API_OUTPUT_PATH + filename,"w") as outputFile:
         with open(API_LOG_PATH,"a") as logFile:
             try:
                 logTimeStamp(f"Starting API jobs:",logFile)
@@ -84,8 +84,8 @@ def jobsAPI(_,cursor):
             except Exception as e:
                 print(f"error while writing jobs to file:\n{e}\n\n",file=logFile)
 
-def profilesAPI(_,cursor):
-    with open(API_OUTPUT_PATH + "MyCollege_profiles.txt","w") as outputFile:
+def profilesAPI(_,cursor,filename="MyCollege_profiles.txt"):
+    with open(API_OUTPUT_PATH + filename,"w") as outputFile:
         with open(API_LOG_PATH,"a") as logFile:
             try:
                 cursor.execute("SELECT belongsTo FROM profiles")
@@ -98,8 +98,8 @@ def profilesAPI(_,cursor):
             except Exception as e:
                 print(f"error while writing jobs to file:\n{e}\n\n",file=logFile)
 
-def usersAPI(_,cursor):
-    with open(API_OUTPUT_PATH + "MyCollege_users.txt","w") as outputFile:
+def usersAPI(_,cursor,filename="MyCollege_users.txt"):
+    with open(API_OUTPUT_PATH + filename,"w") as outputFile:
         with open(API_LOG_PATH,"a") as logFile:
             try:
                 logTimeStamp(f"Starting API users", logFile)
@@ -111,8 +111,8 @@ def usersAPI(_,cursor):
             except Exception as e:
                 print(f"error while writing users to file: \n{e}\n\n", file=logFile)
 
-def trainingOutAPI(_, cursor):
-    with open(API_OUTPUT_PATH + "MyCollege_training.txt","w") as outputFile:
+def trainingOutAPI(_, cursor,filename="MyCollege_training.txt"):
+    with open(API_OUTPUT_PATH + filename,"w") as outputFile:
         with open(API_LOG_PATH,"a") as logFile:
             try:
                 cursor.execute("SELECT username, course FROM coursesTaken GROUP BY username, course")
@@ -129,8 +129,8 @@ def trainingOutAPI(_, cursor):
             except Exception as e:
                 print(f"error while writing training to file: \n{e}\n\n", file=logFile)
 
-def appliedJobsAPI(_, cursor):
-    with open(API_OUTPUT_PATH + "MyCollege_appliedJobs.txt","w") as outputFile:
+def appliedJobsAPI(_, cursor,filename="MyCollege_appliedJobs.txt"):
+    with open(API_OUTPUT_PATH + filename,"w") as outputFile:
         with open(API_LOG_PATH,"a") as logFile:
             try:
                 cursor.execute("SELECT jobs.title, userJobRelation.username, userJobRelation.reasoning FROM jobs, userJobRelation WHERE userJobRelation.jobID = jobs.jobID GROUP BY jobs.jobID, jobs.title, userJobRelation.username, userJobRelation.reasoning")
