@@ -2,4 +2,6 @@ swe_env
 __pycache__
 .idea
 .idea
-*.sqlite 
+*.sqlite
+apiOutputs/api.log
+.vscode

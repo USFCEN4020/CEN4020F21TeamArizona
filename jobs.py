@@ -2,7 +2,9 @@
 # delete a job, notify students job has been removed, 
 # and next time they visit job section they get notified job has been deleted
 import inCollege
-import jobs
+from api import jobsAPI
+from sys import stdout
+from api import appliedJobsAPI
 
 def CheckJob(cursor, source, username, jobID):
     cursor.execute(f"SELECT * FROM jobs WHERE jobID = '{jobID}'")
@@ -12,6 +14,8 @@ def CheckJob(cursor, source, username, jobID):
         print(f"Saved job '{jobID}' was deleted")
         cursor.execute(f"DELETE FROM userJobRelation WHERE username = '{username}' AND jobID ='{jobID}' ")
         source.commit()
+        jobsAPI(source,cursor)
+
 
 def DeleteJob(cursor, source, username, jobID):
     #print("Delete jobs here")
@@ -20,6 +24,7 @@ def DeleteJob(cursor, source, username, jobID):
     cursor.execute(f"DELETE FROM jobs WHERE jobID = '{ID}' ")
     cursor.execute(f"DELETE FROM profileJobs WHERE jobID = '{ID}'")
     source.commit()
+    jobsAPI(source,cursor)
     SearchJob(cursor, source, username)
     
     
@@ -38,9 +43,52 @@ def SavedJob(cursor, source, username, jobID):
         cursor.execute("INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, ?, ?, ?, ?);",
             (username, jobID, "saved", "NA", "NA", "NA"))
         source.commit()
+        jobsAPI(source,cursor)
     elif choice == '2':
         cursor.execute(f"DELETE FROM userJobRelation WHERE username = '{username}' AND jobID ='{jobID}' ")
-        
+
+
+def PostJob(cursor,source,username,userFirst,userLast,apiInputs=None):
+    cursor.execute("SELECT COUNT(*) FROM jobs")
+    if (cursor.fetchone()[0] == 10):
+        if apiInputs: raise Exception("Exception: There are already a maximum number of jobs")
+        print("Unable to add job. There is already the maximum number of jobs posted.")
+    elif not apiInputs:
+        poster = username
+        title = input("Enter a job title: ")
+        description = input("Enter a job description: ")
+        employer = input("Enter name of employer: ")
+        location = input("Enter a location: ")
+        salary = input("Enter a salary: ")
+    else:
+        poster = apiInputs["poster"]
+        title = apiInputs["title"]
+        description = apiInputs["description"]
+        employer = apiInputs["employer"]
+        location = apiInputs["location"]
+        salary = apiInputs["salary"]
+
+        userNotification = "A new job " + str(title) + " has been posted"
+        addNotification = """
+        INSERT into notifications (username, notification) VALUES (?, ?);"""
+        cursor.execute(addNotification, (username, userNotification))
+
+        # adds inputs into the jobs table, thus making a new row
+        addJob = """
+        INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
+
+        cursor.execute(addJob, (poster, title, description, employer, location, salary, userFirst, userLast))
+        source.commit()
+        jobsAPI(source,cursor)
+
+        if not apiInputs:
+            print("To post another job, press 1:")
+            user = input()
+            if user == "1":
+                SearchJob(cursor, source, username)
+            else:
+                inCollege.Options(cursor, source, username)
+                print("")
         
 def SearchJob(cursor, source, username):
     cursor.execute("SELECT * FROM userJobRelation")
@@ -56,7 +104,6 @@ def SearchJob(cursor, source, username):
 
     if (post_job == "yes"):
         print("Posting job now")
-
         cursor.execute("SELECT * FROM users")
         items = cursor.fetchall()
         items = list(items)
@@ -64,37 +111,7 @@ def SearchJob(cursor, source, username):
             if (item[0] == username):
                 userFirst = item[2]
                 userLast = item[3]
-
-        cursor.execute("SELECT COUNT(*) FROM jobs")
-        if (cursor.fetchone()[0] == 10):
-            print("Unable to add job. There is already the maximum number of jobs posted.")
-        else:
-            poster = username
-            title = input("Enter a job title: ")
-            description = input("Enter a job description: ")
-            employer = input("Enter name of employer: ")
-            location = input("Enter a location: ")
-            salary = input("Enter a salary: ")
-
-            userNotification = "A new job " + str(title) + " has been posted"
-            addNotification = """
-            INSERT into notifications (username, notification) VALUES (?, ?);"""
-            cursor.execute(addNotification, (username, userNotification))
-
-            # adds inputs into the jobs table, thus making a new row
-            addJob = """
-            INSERT INTO jobs (poster, title, description, employer, location, salary, first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
-
-            cursor.execute(addJob, (poster, title, description, employer, location, salary, userFirst, userLast))
-            source.commit()
-
-            print("To post another job, press 1:")
-            user = input()
-            if user == "1":
-                SearchJob(cursor, source, username)
-            else:
-                inCollege.Options(cursor, source, username)
-                print("")
+        PostJob(cursor,source,username,userFirst,userLast)
     elif (post_job == "remove"):
         print("Which job would you like to remove?")
         cursor.execute("SELECT * FROM jobs WHERE jobs.poster == ?;", (username,))
@@ -267,10 +284,14 @@ def applyForJob(cursor, source, username, jobID):
                 "UPDATE userJobRelation SET status = 'applied' WHERE userJobRelation.jobID == ? AND userJobRelation.username == ?;",
                 (jobID, username))
             source.commit()
+            jobsAPI(source,cursor)
+            appliedJobsAPI(source, cursor)
     else:
         cursor.execute(
             "INSERT INTO userJobRelation (username, jobID, status, graduation_date, start_date, reasoning) VALUES (?, ?, 'applied', ?, ?, ?);",
             (username, jobID, graduation, start, reason))
         source.commit()
+        appliedJobsAPI(source, cursor)
+        jobsAPI(source,cursor)
     print("Successfully applied!")
     inCollege.Options(cursor, source, username)

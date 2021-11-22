@@ -71,8 +71,8 @@ createProfileJobsTable = """
         title TEXT,
         employer TEXT,
         location TEXT,
-        dateStarted DATE,
-        dateEnded DATE,
+        dateStarted TEXT,
+        dateEnded TEXT,
         description TEXT,
         CONSTRAINT fromUser
             FOREIGN KEY(fromUser) REFERENCES users(username)
@@ -154,6 +154,23 @@ createCoursesTaken = """
         PRIMARY KEY(username,course)
     );
 """
+
+createTraining = """
+    CREATE TABLE trainings
+    (
+        title TEXT,
+        PRIMARY KEY(title)
+    )
+"""
+
+createAPIHistory = """
+    CREATE TABLE apiHistory
+    (
+        apiName TEXT,
+        lastMod INTEGER,
+        PRIMARY KEY(apiName)
+    );
+"""
 # =============================================================================
 # createOptionTable = """
 # 
@@ -178,6 +195,14 @@ cursor.execute(createUserJobRelation)
 cursor.execute(createMessages)
 cursor.execute(createNotifications)
 cursor.execute(createCoursesTaken)
+cursor.execute(createTraining)
+initialTrainings = ["Training and Education","Help Desk","Business Analysis and Strategy","Security"]
+for training in initialTrainings:
+    cursor.execute(f"INSERT INTO trainings(title) VALUES('{training}')")
+cursor.execute(createAPIHistory)
+cursor.execute("INSERT INTO apiHistory(apiName,lastMod) VALUES('newJobs.txt',0)")
+cursor.execute("INSERT INTO apiHistory(apiName,lastMod) VALUES('newtraining.txt',0)")
+cursor.execute("INSERT INTO apiHistory(apiName,lastMod) VALUES('studentAccounts.txt',0)")
 #cursor.execute(createOptionTable)
 source.commit()
 

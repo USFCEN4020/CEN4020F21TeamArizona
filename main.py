@@ -1,6 +1,7 @@
 import sqlite3 as sql
 import inCollege
 import message
+from api import runAllAPIs
 
 #main Function
 def Main():
@@ -30,7 +31,7 @@ def Main():
         elif option == "6":
             status = inCollege.InCollegeLink(cursor)
         elif option == "7":
-            inCollege.trainingProgram()
+            inCollege.trainingProgram(cursor)
 
 
         if status:
@@ -44,4 +45,5 @@ if __name__ == "__main__":
     sqlfile = "database.sqlite"
     source = sql.connect(sqlfile)
     cursor = source.cursor()
+    runAllAPIs(source,cursor)
     Main()

@@ -1,3 +1,5 @@
+import api
+
 def Learning(cursor,source,username):
     currentCourses = dict([(i,course) for i,course in
     enumerate([
@@ -41,6 +43,8 @@ def Learning(cursor,source,username):
 def completeCourse(cursor,source,username,courseName):
     cursor.execute("INSERT INTO coursesTaken(username,course) VALUES(?,?)",(username,courseName))
     source.commit()
+    api.trainingOutAPI(source, cursor)
+
 
 def hasTakenCourse(cursor,username,courseName):
     cursor.execute("SELECT * FROM coursesTaken WHERE username = ? AND course = ?",(username,courseName))

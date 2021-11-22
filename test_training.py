@@ -158,7 +158,17 @@ def testDB():
         PRIMARY KEY(username,course)
     );
     """
-
+    createTraining = """
+        CREATE TABLE trainings
+        (
+            title TEXT,
+            PRIMARY KEY(title)
+        )
+    """
+    cursor.execute(createTraining)
+    initialTrainings = ["Training and Education","Help Desk","Business Analysis and Strategy","Security"]
+    for training in initialTrainings:
+        cursor.execute(f"INSERT INTO trainings(title) VALUES('{training}')")
     cursor.execute(createTable)
     cursor.execute(createJobTable)
     cursor.execute(createProfileTable)
@@ -234,50 +244,55 @@ def test_CancelTraining(monkeypatch, capsys, testDB):
 # Business Analysis & Strategy - "Present sign in after selecting option"
 def test_Training(monkeypatch,capsys,testDB):
     inputs = iter(['7', '0', '0'])
+    cursor, _ = testDB
     desiredOutput = "Under Construction"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.trainingProgram()
+        inCollege.trainingProgram(cursor)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
 
-def test_IT(monkeypatch, capsys): 
+def test_IT(monkeypatch, capsys,testDB): 
     inputs = iter(['7','1'])
+    cursor, _ = testDB
     desiredOutput = "Coming Soon!"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.trainingProgram()
+        inCollege.trainingProgram(cursor)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
 
-def test_Toptions(monkeypatch,capsys):
+def test_Toptions(monkeypatch,capsys,testDB):
     inputs = iter(['7'])
+    cursor, _ = testDB
     desiredOutput = "Please choose one of the options you would like\n0 for Training and Education | 1 for IT Help Desk | 2 for Business Analysis and Strategy | 3 for Security"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.trainingProgram()
+        inCollege.trainingProgram(cursor)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
 
-def test_BnA(monkeypatch,capsys):
+def test_BnA(monkeypatch,capsys,testDB):
     inputs = iter(['7','2'])
+    cursor,_ = testDB
     desiredOutput = "Please choose one of the options\n 0 for How to use inCollege Learning, 1 for Train the trainer, 2 for Gamification of learning, 3 for else"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.trainingProgram()
+        inCollege.trainingProgram(cursor)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
 
-def test_BnA1(monkeypatch,capsys):
+def test_BnA1(monkeypatch,capsys,testDB):
+    cursor, _ = testDB
     inputs = iter(['7','2','1'])
     desiredOutput = "Please choose one of the options\n 0 for How to use inCollege Learning, 1 for Train the trainer, 2 for Gamification of learning, 3 for else\nPlease choose sign in from the menu and sign into see the rest of the results"
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:
-        inCollege.trainingProgram()
+        inCollege.trainingProgram(cursor)
     except(StopIteration):
         output = capsys.readouterr().out
         assert output == desiredOutput
