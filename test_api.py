@@ -298,3 +298,15 @@ def test_MyCollegeSavedJobs(testDB):
 
     file_exists = exists(API_OUTPUT_PATH + "MyCollege_savedJobs.txt")
     assert file_exists == True
+
+
+def test_signUpAPI(testDB):
+    cursor, source = testDB
+    assert api.readFileIfExists("studentAccounts.txt")
+    api.signUpAPI(source,cursor)
+    cursor.execute("SELECT * FROM users WHERE username = 'homer'")
+    queryResult = cursor.fetchone()
+    expectedResults = ["homer","Simpson@12","homer","simpson"]
+    for result in expectedResults:
+        assert result in queryResult
+    

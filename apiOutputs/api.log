@@ -2369,3 +2369,935 @@ Successfully wrote training to file
 Successfully wrote userJobs to file
 
 
+Sun Nov 21 19:48:17 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API profiles for user ('Bob',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Successfully wrote userJobs to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:21 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote training to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:30 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API profiles for user ('Bob',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Successfully wrote userJobs to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:35 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote training to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:48:54 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:32 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:49:46 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:17 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:26 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:50:49 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API jobs:
+successfully wrote jobs to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API profiles for user ('homer',)
+Successfully wrote profiles to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Successfully wrote training to file
+
+
+Successfully wrote userJobs to file
+
+
+Successfully wrote saved jobs to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API users
+Successfully wrote users to file
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'homer', 'firstName': 'homer', 'lastName': 'simpson', 'password': 'Simpson@12', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'johndoe123', 'firstName': 'Antonio', 'lastName': 'Gonzalez', 'password': 'Afs321!23 ', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'donnaWhite', 'firstName': 'Donna', 'lastName': 'White', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'LazytoCode', 'firstName': 'Lazy', 'lastName': 'Coder', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'TheFinalCountdown', 'firstName': 'Final', 'lastName': 'Countdown', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'BrilliantDiamond', 'firstName': 'Brilliant', 'lastName': 'Diamond', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+
+Sun Nov 21 19:51:53 2021 :: Starting API signUp with inputs:
+{'username': 'ShiningPearl', 'firstName': 'Shining', 'lastName': 'Pearl', 'password': 'Afs321!23', 'membershipCode': '0'}
+Signed up successfull
+
+

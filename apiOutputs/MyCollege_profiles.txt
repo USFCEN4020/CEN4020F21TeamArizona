@@ -1,0 +1,27 @@
+
+Profile: 
+-------------
+Title: Software Engineer
+Major: Computer Science
+University: Usf
+About: I am well-versed in Python, C, C++, and Java, as well as Git
+
+Experience Section:
+-------------------------
+Job 1:
+-------
+title: Tech Associate
+employer: Best Buy
+dateStarted: 08/12/2018
+dateEnded: 10/11/2021
+location: Tampa, Florida
+description: I worked all round the store in assisting customer sales and aiding tech quality throughout the store
+
+Education Section:
+-------------------------
+School Name: Usf
+Degree: B.S.
+Years attedend: 4
+
+=====
+
