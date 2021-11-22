@@ -278,8 +278,8 @@ def test_SearchNonExistingUser(monkeypatch, capsys, testDB):
 
 
 def test_video(monkeypatch, capsys,testDB):
-    inputs = iter(['1', ])
-    desiredOutput = "Video is now playing\n\nThanks to inCollege I was able to meet with fellow college students and establish connections\nthat allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege\nI was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft\n--Alyssa (Arizona)\nWould you like to sign in or sign up? 0 for sign in, and 1 for sign up: \n3 for information video | Search Person 4\n5 for Useful Links | 6 for InCollege Important Links\n"
+    inputs = iter(['3', ])
+    desiredOutput = "Video is now playing\n\nThanks to inCollege I was able to meet with fellow college students and establish connections\nthat allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege\nI was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft\n--Alyssa (Arizona)\nWould you like to sign in or sign up? 0 for sign in, and 1 for sign up: \n3 for information video | Search Person 4\n5 for Useful Links | 6 for InCollege Important Links | 7 Training \n"
     cursor, source = testDB
     monkeypatch.setattr('builtins.input', lambda _="": next(inputs))
     try:

@@ -23,7 +23,7 @@ def Main():
             status, username = inCollege.signUp(cursor,source)
             print("Remember – you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!")
         elif option == "3":
-            status = inCollege.PlayVideo()
+            status = inCollege.PlayVideo(cursor,source)
         elif option == "4":
             status = inCollege.FindPerson(cursor)
         elif option == "5":

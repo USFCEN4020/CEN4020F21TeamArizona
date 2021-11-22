@@ -168,8 +168,7 @@ def PlayVideo(cursor, source):
 def successStory():
     print("Thanks to inCollege I was able to meet with fellow college students and establish connections")
     print("that allowed me to learn new skills, and become a prime job candidate. Soon after signing up for inCollege")
-    print(
-        "I was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft")
+    print("I was learning new coding languages and working on personal project. Now I'm about start my first job at Microsoft")
     print("--Alyssa (Arizona)")
 
 
