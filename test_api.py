@@ -309,4 +309,23 @@ def test_signUpAPI(testDB):
     expectedResults = ["homer","Simpson@12","homer","simpson"]
     for result in expectedResults:
         assert result in queryResult
+
+def test_newJobsAPI(testDB):
+    cursor, source = testDB
+    assert api.readFileIfExists("newJobs.txt")
+    api.newJobsAPI(source,cursor)
+    cursor.execute("SELECT * FROM jobs WHERE title = 'Software Engineer'")
+    queryResult = cursor.fetchone()
+    expectedResults = ['BrilliantDiamond', 'Software Engineer', "Become a Software Engineer today with Pokemon!\nIt's one of the best positions out there!\nTrust us!", 'Pokemon', 'Tokyo, Japan',80000]
+    for result in expectedResults:
+        assert result in queryResult
     
+def test_newTrainingAPI(testDB):
+    cursor, source = testDB
+    assert api.readFileIfExists("newtraining.txt")
+    api.trainingAPI(source,cursor)
+    cursor.execute("SELECT * FROM trainings WHERE title = 'How to Ace that Interview'")
+    queryResult = cursor.fetchone()
+    expectedResults = ["How to Ace that Interview"]
+    for result in expectedResults:
+        assert result in queryResult
